@@ -1,5 +1,5 @@
 :root {
-  /* ☀️ 여름 테마 — 하늘·바다·태양 */
+  /* 🕵️ 사람 묘사하기 테마 — 맑은 하늘 + 밝은 파스텔 */
   --bg1: #e0f7fa;
   --bg2: #fffde7;
   --primary: #0ea5e9;     /* 하늘색 */
@@ -249,7 +249,8 @@ main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
 }
 .build-label { margin: 0 0 10px; font-size: 1.08rem; color: var(--primary-dark); }
 .build-sub { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
-#build-activities .chip-group-title:first-child { margin-top: 0; }
+#build-adjs .chip-group-title:first-child,
+#build-target .chip-group-title:first-child { margin-top: 0; }
 .chip-group-title { margin: 14px 0 7px; font-size: 0.92rem; font-weight: 800; color: var(--primary-dark); }
 .chip-row { display: flex; flex-wrap: wrap; gap: 9px; }
 .chip {
@@ -416,8 +417,7 @@ main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
 /* ===== 영역별 내부 스크롤 (전체 페이지 스크롤 최소화) =====
  * 카드는 가로로 채워서 펼치고, 넘치는 부분만 그 영역 안에서 스크롤돼요. */
 #suggestion-grid,
-#day-grid, #place-grid,
-#build-activities,
+#color-grid, #size-grid, #body-grid, #wear-grid,
 #practice-list {
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -426,32 +426,31 @@ main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
   scrollbar-color: rgba(14, 165, 233, 0.55) transparent;
 }
 #suggestion-grid { max-height: clamp(300px, 58vh, 820px); }
-#day-grid, #place-grid { max-height: clamp(170px, 27vh, 420px); }
-#build-activities { max-height: clamp(200px, 40vh, 520px); }
+#color-grid, #size-grid, #body-grid, #wear-grid { max-height: clamp(200px, 34vh, 480px); }
 #practice-list { max-height: clamp(300px, 64vh, 1000px); }
 
 /* 스크롤 영역임을 살짝 표시 (은은한 배경 + 둥근 모서리) */
-#suggestion-grid, #day-grid, #place-grid, #build-activities {
+#suggestion-grid, #color-grid, #size-grid, #body-grid, #wear-grid {
   background: rgba(255, 255, 255, 0.32);
   border-radius: 18px;
 }
 
 /* 크롬/사파리 스크롤바 */
 #suggestion-grid::-webkit-scrollbar,
-#day-grid::-webkit-scrollbar, #place-grid::-webkit-scrollbar,
-#build-activities::-webkit-scrollbar,
+#color-grid::-webkit-scrollbar, #size-grid::-webkit-scrollbar,
+#body-grid::-webkit-scrollbar, #wear-grid::-webkit-scrollbar,
 #practice-list::-webkit-scrollbar {
   width: 10px;
 }
 #suggestion-grid::-webkit-scrollbar-thumb,
-#day-grid::-webkit-scrollbar-thumb, #place-grid::-webkit-scrollbar-thumb,
-#build-activities::-webkit-scrollbar-thumb,
+#color-grid::-webkit-scrollbar-thumb, #size-grid::-webkit-scrollbar-thumb,
+#body-grid::-webkit-scrollbar-thumb, #wear-grid::-webkit-scrollbar-thumb,
 #practice-list::-webkit-scrollbar-thumb {
   background: rgba(14, 165, 233, 0.5);
   border-radius: 999px;
 }
 #suggestion-grid::-webkit-scrollbar-thumb:hover,
-#build-activities::-webkit-scrollbar-thumb:hover {
+#practice-list::-webkit-scrollbar-thumb:hover {
   background: rgba(14, 165, 233, 0.75);
 }
 
@@ -464,7 +463,7 @@ main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
 }
 
 /* ===== 문장 만들기: 모든 칩 줄을 '가로'로 배치 + 좌우 스크롤 ===== */
-#build-activities { max-height: none; overflow-y: visible; min-width: 0; }
+#build-adjs, #build-target { max-height: none; overflow-y: visible; min-width: 0; }
 .build-step .chip-row {
   flex-wrap: nowrap;          /* 줄바꿈 없이 한 줄로 */
   overflow-x: auto;           /* 넘치면 좌우(가로) 스크롤 */
@@ -487,16 +486,92 @@ main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
   background: rgba(14, 165, 233, 0.75);
 }
 
-/* 누구와(With) 그리드도 다른 그리드처럼 영역 내부 스크롤 */
-#with-grid {
-  overflow-y: auto; overscroll-behavior: contain;
-  padding: 8px 10px 12px 4px;
-  scrollbar-width: thin; scrollbar-color: rgba(14, 165, 233, 0.55) transparent;
-  max-height: clamp(170px, 27vh, 420px);
-  background: rgba(255, 255, 255, 0.32); border-radius: 18px;
+/* ===== 🧑‍🎨 캐릭터 그림 (문장 내용 그대로 그린 SVG) ===== */
+.face-visual { margin: 4px 0 14px; }
+.face-visual .face-svg {
+  display: block; width: 100%; height: 150px;
+  border-radius: 16px;
 }
-#with-grid::-webkit-scrollbar { width: 10px; }
-#with-grid::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.5); border-radius: 999px; }
+.pcard .face-visual .face-svg { height: 118px; }
 
-/* 누구와(With) 칩 선택 색 */
-.chip.with.on { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: #fff; border-color: transparent; }
+/* ===== 🎨 색깔 낱말 카드의 색 견본 ===== */
+.swatch-wrap { display: flex; justify-content: center; margin: 8px 0 14px; }
+.swatch {
+  width: 74px; height: 74px; border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(15, 58, 77, 0.18), inset 0 0 0 1.5px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== 🧩 문장 만들기 결과의 캐릭터 미리보기 ===== */
+.br-preview { display: flex; justify-content: center; margin: 6px 0 4px; }
+.br-preview .face-svg {
+  width: 168px; height: 186px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  animation: pop 0.25s ease;
+}
+
+/* ===== 🕵️ 누구게? 듣고 찾기 퀴즈 ===== */
+.quiz-controls {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; margin-bottom: 12px;
+}
+.quiz-score {
+  margin-left: auto; font-weight: 800; font-size: 0.92rem;
+  color: var(--primary-dark);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 8px 14px; border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+.quiz-feedback {
+  text-align: center; font-weight: 800; font-size: 1.05rem;
+  color: var(--primary-dark);
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px dashed rgba(14, 165, 233, 0.35);
+  border-radius: 16px; padding: 13px 16px; margin-bottom: 14px;
+}
+.quiz-feedback.good { color: var(--pos); border-color: var(--pos); background: #ecfdf5; border-style: solid; }
+.quiz-feedback.bad { color: #d97706; border-color: var(--wish); background: #fff7ed; border-style: solid; }
+.quiz-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 760px) { .quiz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.qcard {
+  position: relative; border: none; cursor: pointer; padding: 10px;
+  background: var(--card); border-radius: 22px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+}
+.qcard:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.qcard .face-svg { display: block; width: 100%; height: auto; border-radius: 16px; }
+.qcard-num {
+  position: absolute; top: 16px; left: 16px;
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.9); color: var(--primary-dark);
+  font-weight: 800; font-size: 1rem; box-shadow: var(--shadow-sm);
+}
+.qcard.correct {
+  box-shadow: 0 0 0 4px var(--pos), var(--shadow);
+  animation: correct-bounce 0.5s ease;
+}
+.qcard.dim { opacity: 0.35; }
+.qcard.wrong { animation: wrong-shake 0.4s ease; box-shadow: 0 0 0 4px var(--neg), var(--shadow-sm); }
+@keyframes correct-bounce {
+  0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); }
+}
+@keyframes wrong-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-7px); } 75% { transform: translateX(7px); }
+}
+.quiz-sentence {
+  margin-top: 16px; text-align: center;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(14, 165, 233, 0.25);
+  border-radius: 18px; padding: 16px 18px;
+  animation: fade 0.28s ease;
+}
+.quiz-sentence.hidden { display: none; }
+.quiz-sentence .en { font-weight: 800; font-size: 1.25rem; color: var(--primary-dark); line-height: 1.5; }
+.quiz-sentence .ko { color: var(--muted); font-size: 0.98rem; margin-top: 6px; }
