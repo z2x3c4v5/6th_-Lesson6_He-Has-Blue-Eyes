@@ -94,6 +94,89 @@ body {
 }
 .tab-btn:active { transform: scale(0.96); }
 
+/* ===== STEP 진행 표시 (탭을 단계로) ===== */
+.step-no {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(14, 165, 233, 0.16); color: var(--primary-dark);
+  font-size: 0.82rem; font-weight: 900; margin-right: 3px;
+}
+.tab-btn.active .step-no { background: rgba(255, 255, 255, 0.32); color: #fff; }
+
+/* ===== STEP 안내 머리말 ===== */
+.step-head {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.14), rgba(6,182,212,0.1));
+  border: 1.5px solid rgba(14, 165, 233, 0.22);
+  border-radius: 20px; padding: 16px 18px; margin: 6px 0 22px;
+}
+.step-badge {
+  flex-shrink: 0; align-self: flex-start;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff; font-weight: 900; font-size: 0.85rem;
+  padding: 7px 12px; border-radius: 999px; letter-spacing: 0.4px;
+  box-shadow: var(--shadow-sm);
+}
+.step-title { margin: 0 0 3px; font-size: 1.3rem; }
+.step-desc { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+
+/* ===== 다음 단계 버튼 ===== */
+.step-next-wrap { text-align: center; margin: 8px 0 4px; }
+.next-step { font-size: 1.02rem; padding: 15px 26px; border-radius: 18px; }
+.next-step b { font-weight: 900; }
+
+/* ===== STEP 2 문형 뼈대 ===== */
+.pattern-box {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(14, 165, 233, 0.25);
+  border-radius: 20px; padding: 16px 18px; margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+}
+.pattern-q {
+  font-size: 1.15rem; font-weight: 900; color: var(--primary-dark);
+  text-align: center; margin-bottom: 14px;
+}
+.pattern-q .pat-ko { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.pattern-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 0; border-top: 1px dashed rgba(14, 165, 233, 0.22);
+}
+.pat-key {
+  flex-shrink: 0; color: #fff; font-weight: 800; font-size: 0.9rem;
+  padding: 6px 12px; border-radius: 999px;
+}
+.pat-key.has { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+.pat-key.wear { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+.pat-txt { font-size: 1.08rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.pat-txt b { color: var(--primary-dark); }
+.slot {
+  display: inline-block; background: #fff7d6; border: 1.5px dashed var(--wish);
+  color: #b45309; font-weight: 800; font-size: 0.86rem;
+  padding: 3px 10px; border-radius: 9px;
+}
+.slot.big { background: #e0f7fa; border-color: var(--primary); color: var(--primary-dark); }
+
+/* ===== 단어 → 문장 예문 다리 ===== */
+.card-ex {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 9px; padding-top: 9px;
+  border-top: 1px dashed rgba(14, 165, 233, 0.28);
+}
+.card-ex .ex-sen { font-size: 0.92rem; font-weight: 700; color: #0f3a4d; line-height: 1.4; }
+.ex-play {
+  flex-shrink: 0; border: none; cursor: pointer;
+  background: rgba(14, 165, 233, 0.12); color: var(--primary-dark);
+  font-weight: 800; font-size: 0.76rem; padding: 4px 10px; border-radius: 9px;
+  transition: background 0.15s;
+}
+.ex-play:hover { background: rgba(14, 165, 233, 0.22); }
+.ex-play:active { transform: scale(0.95); }
+
+@media (max-width: 560px) {
+  .step-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .pat-txt { font-size: 0.98rem; }
+}
+
 main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: fade 0.28s ease; }

@@ -182,77 +182,78 @@ const DESC_LEVELS = {
   ],
 };
 
-/* ===== 🎨 색깔 낱말 (swatch: 카드에 색 동그라미로 표시) ===== */
+/* ===== 🎨 색깔 낱말 (swatch: 카드에 색 동그라미로 표시) =====
+ * ex: 이 단어로 만드는 문장 (단어 → 문장 다리) */
 const COLOR_WORDS = [
-  { en: "red",    ko: "빨간색", swatch: "#ef4444" },
-  { en: "orange", ko: "주황색", swatch: "#f97316" },
-  { en: "yellow", ko: "노란색", swatch: "#fbbf24" },
-  { en: "green",  ko: "초록색", swatch: "#22c55e" },
-  { en: "blue",   ko: "파란색", swatch: "#3b82f6" },
-  { en: "purple", ko: "보라색", swatch: "#a855f7" },
-  { en: "pink",   ko: "분홍색", swatch: "#f472b6" },
-  { en: "brown",  ko: "갈색",   swatch: "#8b5e34" },
-  { en: "black",  ko: "검은색", swatch: "#33302e" },
-  { en: "white",  ko: "하얀색", swatch: "#f8fafc" },
-  { en: "gray",   ko: "회색",   swatch: "#9ca3af" },
-  { en: "blonde", ko: "금발",   swatch: "#fcd34d" },
+  { en: "red",    ko: "빨간색", swatch: "#ef4444", ex: "She has red hair." },
+  { en: "orange", ko: "주황색", swatch: "#f97316", ex: "He's wearing an orange hat." },
+  { en: "yellow", ko: "노란색", swatch: "#fbbf24", ex: "He has yellow hair." },
+  { en: "green",  ko: "초록색", swatch: "#22c55e", ex: "He has green eyes." },
+  { en: "blue",   ko: "파란색", swatch: "#3b82f6", ex: "He has blue eyes." },
+  { en: "purple", ko: "보라색", swatch: "#a855f7", ex: "She has purple hair." },
+  { en: "pink",   ko: "분홍색", swatch: "#f472b6", ex: "She's wearing a pink dress." },
+  { en: "brown",  ko: "갈색",   swatch: "#8b5e34", ex: "She has brown eyes." },
+  { en: "black",  ko: "검은색", swatch: "#33302e", ex: "He has black hair." },
+  { en: "white",  ko: "하얀색", swatch: "#f8fafc", ex: "She's wearing a white dress." },
+  { en: "gray",   ko: "회색",   swatch: "#9ca3af", ex: "He has gray hair." },
+  { en: "blonde", ko: "금발",   swatch: "#fcd34d", ex: "She has blonde hair." },
 ];
 
 /* ===== 📏 크기·모양 낱말 (필수: big/small/straight/curly) =====
  * face: 뜻을 눈으로 보여주는 캐릭터 그림 (highlight로 해당 부분 강조) */
 const SIZE_WORDS = [
-  { en: "big",      ko: "큰",           emoji: "🐘",
+  { en: "big",      ko: "큰",           emoji: "🐘", ex: "He has big eyes.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", eyeSize: "big",   highlight: "eyes" } },
-  { en: "small",    ko: "작은",         emoji: "🐭",
+  { en: "small",    ko: "작은",         emoji: "🐭", ex: "She has a small nose.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", eyeSize: "small", highlight: "eyes" } },
-  { en: "long",     ko: "긴",           emoji: "📏",
+  { en: "long",     ko: "긴",           emoji: "📏", ex: "She has long hair.",
     face: { boy: false, hairLen: "long",  hairStyle: "straight", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
-  { en: "short",    ko: "짧은",         emoji: "✂️",
+  { en: "short",    ko: "짧은",         emoji: "✂️", ex: "He has short hair.",
     face: { boy: true,  hairLen: "short", hairStyle: "straight", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
-  { en: "straight", ko: "곧은 (생머리)", emoji: "➖",
+  { en: "straight", ko: "곧은 (생머리)", emoji: "➖", ex: "She has straight hair.",
     face: { boy: false, hairLen: "long",  hairStyle: "straight", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
-  { en: "curly",    ko: "곱슬곱슬한",   emoji: "➰",
+  { en: "curly",    ko: "곱슬곱슬한",   emoji: "➰", ex: "He has curly hair.",
     face: { boy: false, hairLen: "long",  hairStyle: "curly", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
 ];
 
 /* ===== 🧑 신체 낱말 (필수: eyes/nose/hair/ears) ===== */
 const BODY_WORDS = [
-  { en: "eyes",  ko: "눈",       emoji: "👀",
+  { en: "eyes",  ko: "눈",       emoji: "👀", ex: "He has blue eyes.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "blue", eyeSize: "big", highlight: "eyes" } },
-  { en: "nose",  ko: "코",       emoji: "👃",
+  { en: "nose",  ko: "코",       emoji: "👃", ex: "He has a big nose.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", highlight: "nose" } },
-  { en: "ears",  ko: "귀",       emoji: "👂",
+  { en: "ears",  ko: "귀",       emoji: "👂", ex: "She has small ears.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", earSize: "big", highlight: "ears" } },
-  { en: "hair",  ko: "머리카락", emoji: "💇",
+  { en: "hair",  ko: "머리카락", emoji: "💇", ex: "She has long hair.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
-  { en: "mouth", ko: "입",       emoji: "👄",
+  { en: "mouth", ko: "입",       emoji: "👄", ex: "She has a small mouth.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", highlight: "mouth" } },
-  { en: "face",  ko: "얼굴",     emoji: "🙂",
+  { en: "face",  ko: "얼굴",     emoji: "🙂", ex: "He has a round face.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", highlight: "face" } },
 ];
 
 /* ===== 👗 옷·소품 낱말 (필수: dress/hat/glasses 등) =====
  * face: 그 옷·소품을 착용한 캐릭터 그림 */
 const WEAR_WORDS = [
-  { en: "dress",      ko: "드레스",        emoji: "👗",
+  { en: "dress",      ko: "드레스",        emoji: "👗", ex: "She's wearing a yellow dress.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", dress: "pink" } },
-  { en: "hat",        ko: "모자",          emoji: "👒",
+  { en: "hat",        ko: "모자",          emoji: "👒", ex: "She's wearing a hat.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", hat: "sun", hatColor: "yellow" } },
-  { en: "cap",        ko: "야구 모자",     emoji: "🧢",
+  { en: "cap",        ko: "야구 모자",     emoji: "🧢", ex: "He's wearing a blue cap.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", hat: "cap", hatColor: "blue" } },
-  { en: "cowboy hat", ko: "카우보이 모자", emoji: "🤠",
+  { en: "cowboy hat", ko: "카우보이 모자", emoji: "🤠", ex: "He's wearing a cowboy hat.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", hat: "cowboy" } },
-  { en: "glasses",    ko: "안경",          emoji: "👓",
+  { en: "glasses",    ko: "안경",          emoji: "👓", ex: "He's wearing glasses.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", glasses: true } },
-  { en: "sunglasses", ko: "선글라스",      emoji: "🕶️",
+  { en: "sunglasses", ko: "선글라스",      emoji: "🕶️", ex: "She's wearing sunglasses.",
     face: { boy: false, hairLen: "long", hairColor: "black", eyeColor: "brown", sunglasses: true } },
-  { en: "mask",       ko: "마스크",        emoji: "😷",
+  { en: "mask",       ko: "마스크",        emoji: "😷", ex: "He's wearing a mask.",
     face: { boy: true,  hairLen: "short", hairColor: "black", eyeColor: "brown", mask: true } },
-  { en: "boots",      ko: "부츠",          emoji: "👢",
+  { en: "boots",      ko: "부츠",          emoji: "👢", ex: "He's wearing boots.",
     face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", boots: true, bootColor: "brown" } },
-  { en: "helmet",     ko: "헬멧",          emoji: "⛑️",
+  { en: "helmet",     ko: "헬멧",          emoji: "⛑️", ex: "He's wearing a red helmet.",
     face: { boy: true,  hairLen: "short", hairColor: "black", eyeColor: "brown", hat: "helmet", hatColor: "red" } },
-  { en: "braid",      ko: "땋은 머리",     emoji: "🎀",
+  { en: "braid",      ko: "땋은 머리",     emoji: "🎀", ex: "She has long hair in a braid.",
     face: { boy: false, hairLen: "long", hairColor: "blonde", eyeColor: "blue", braid: true } },
 ];
 
@@ -394,6 +395,7 @@ const WORD_MEANINGS = {
   "short": "짧은",
   "straight": "곧은, 생머리의",
   "curly": "곱슬곱슬한",
+  "round": "둥근",
   "braid": "땋은 머리 (머리묶음)",
   "red": "빨간, 빨간색",
   "orange": "주황색",

@@ -13,15 +13,16 @@
     <div class="cloud cloud1"></div>
     <div class="cloud cloud2"></div>
     <h1>🕵️ He Has Blue Eyes!</h1>
-    <p class="subtitle">눈·코·머리카락·옷차림… 사람의 모습을 영어로 묘사해 봐요!</p>
+    <p class="subtitle">단어부터 문장까지, 사람의 모습을 영어로 묘사해 봐요!</p>
   </header>
 
-  <nav class="tabs">
-    <button class="tab-btn active" data-tab="desc">👀 묘사 말하기</button>
-    <button class="tab-btn" data-tab="words">🎨 낱말</button>
-    <button class="tab-btn" data-tab="build">🧩 문장 만들기</button>
-    <button class="tab-btn" data-tab="quiz">🕵️ 누구게?</button>
-    <button class="tab-btn" data-tab="practice">🎤 내 문장 연습 <span id="practice-count" class="tab-count">0</span></button>
+  <!-- ===== STEP 진행 표시 (단어 → 문장 → 만들기 → 게임 → 말하기) ===== -->
+  <nav class="tabs steps">
+    <button class="tab-btn active" data-tab="words"><span class="step-no">1</span> 🎨 단어</button>
+    <button class="tab-btn" data-tab="desc"><span class="step-no">2</span> 👀 문장</button>
+    <button class="tab-btn" data-tab="build"><span class="step-no">3</span> 🧩 만들기</button>
+    <button class="tab-btn" data-tab="quiz"><span class="step-no">4</span> 🕵️ 게임</button>
+    <button class="tab-btn" data-tab="practice"><span class="step-no">5</span> 🎤 말하기 <span id="practice-count" class="tab-count">0</span></button>
   </nav>
 
   <div class="toolbar">
@@ -32,34 +33,16 @@
   </div>
 
   <main>
-    <!-- ===== 묘사 말하기 (He has ~ / She's wearing ~) ===== -->
-    <section id="tab-desc" class="tab-panel active">
-      <div class="section-block">
-        <h2>사람 묘사 문장 <span class="count">28개 × 3단계</span></h2>
-        <div class="level-switch">
-          <button class="level-btn active" data-level="beginner">초급</button>
-          <button class="level-btn" data-level="intermediate">중급</button>
-          <button class="level-btn" data-level="advanced">고급</button>
+    <!-- ===== STEP 1 · 단어 익히기 ===== -->
+    <section id="tab-words" class="tab-panel active">
+      <div class="step-head">
+        <span class="step-badge">STEP 1</span>
+        <div>
+          <h2 class="step-title">🎨 단어 익히기</h2>
+          <p class="step-desc">사람을 묘사하는 낱말부터 익혀요. 카드 아래 <b>예문 ▶</b>를 누르면 그 단어로 만든 문장을 들려줘요. (색깔 + 크기·모양 + 신체 → <b>He has big blue eyes.</b>)</p>
         </div>
-        <div class="cat-switch">
-          <button class="cat-btn active" data-cat="all">전체</button>
-          <button class="cat-btn" data-cat="eyes">👀 눈</button>
-          <button class="cat-btn" data-cat="hair">💇 머리카락</button>
-          <button class="cat-btn" data-cat="face">👃 코·귀</button>
-          <button class="cat-btn" data-cat="wear">👗 입은 것</button>
-        </div>
-        <p class="hint">
-          <b>He/She has ~</b>(신체) · <b>He's/She's wearing ~</b>(입은 것) 패턴으로 사람을 묘사해요.
-          카드의 <b>그림은 문장 내용 그대로</b> 그려져요! 난이도를 올리면 같은 친구를 더 자세히 묘사한답니다.
-          단어를 누르면 뜻과 발음을 알 수 있고, 마음에 드는 문장은 <b>⭐</b>로 연습 목록에 담아보세요.
-        </p>
-        <div id="suggestion-grid" class="card-grid five"></div>
       </div>
-    </section>
 
-    <!-- ===== 낱말 (색깔 · 크기/모양 · 신체 · 옷/소품) ===== -->
-    <section id="tab-words" class="tab-panel">
-      <p class="hint" style="margin-bottom:18px">💡 사람을 묘사할 때 쓰는 낱말들이에요. <b>색깔 + 크기/모양 + 신체</b>를 합치면 <b>He has big blue eyes.</b> 같은 문장이 돼요. 카드를 눌러 발음을 들어보세요!</p>
       <div class="section-block">
         <h2>🎨 색깔 (Colors) <span class="count">12개</span></h2>
         <p class="hint">눈·머리카락·옷의 색을 말해요. (예: She has <b>purple</b> hair.)</p>
@@ -80,14 +63,75 @@
         <p class="hint"><b>be wearing</b>과 함께 써요. (예: She's wearing a yellow <b>dress</b>.)</p>
         <div id="wear-grid" class="card-grid five"></div>
       </div>
+
+      <div class="step-next-wrap">
+        <button class="btn primary next-step" data-next="desc">단어를 익혔어요! 다음 단계 ▶ <b>STEP 2 · 문장 배우기</b></button>
+      </div>
     </section>
 
-    <!-- ===== 문장 만들기 ===== -->
-    <section id="tab-build" class="tab-panel">
-      <div class="section-block">
-        <h2>🧩 나만의 묘사 문장 만들기</h2>
-        <p class="hint">누구를 · 무엇을 · 어떻게 묘사할지 고르면 <b>문장 + 한글 뜻 + 발음</b>은 물론, <b>문장과 똑같이 생긴 캐릭터</b>까지 그려줘요! 어울리지 않는 조합(예: curly nose 🤭)은 이유도 알려줄게요.</p>
+    <!-- ===== STEP 2 · 문장 배우기 ===== -->
+    <section id="tab-desc" class="tab-panel">
+      <div class="step-head">
+        <span class="step-badge">STEP 2</span>
+        <div>
+          <h2 class="step-title">👀 문장 배우기</h2>
+          <p class="step-desc">배운 단어가 어떻게 문장이 되는지 봐요. 카드를 누르면 <b>질문 → 대답</b> 순서로 들려줘요!</p>
+        </div>
+      </div>
 
+      <!-- 문형 뼈대 -->
+      <div class="pattern-box">
+        <div class="pattern-q">❓ What does he/she look like? <span class="pat-ko">(그/그녀는 어떻게 생겼나요?)</span></div>
+        <div class="pattern-row">
+          <span class="pat-key has">🙌 has</span>
+          <span class="pat-txt">He / She <b>has</b>
+            <span class="slot">크기</span><span class="slot">색깔</span>
+            <span class="slot big">눈 · 코 · 머리 · 귀</span>
+          </span>
+        </div>
+        <div class="pattern-row">
+          <span class="pat-key wear">👕 wearing</span>
+          <span class="pat-txt">He / She <b>is wearing</b>
+            <span class="slot">색깔</span>
+            <span class="slot big">옷 · 소품</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <h2>사람 묘사 문장 <span class="count">28개 × 3단계</span></h2>
+        <div class="level-switch">
+          <button class="level-btn active" data-level="beginner">초급</button>
+          <button class="level-btn" data-level="intermediate">중급</button>
+          <button class="level-btn" data-level="advanced">고급</button>
+        </div>
+        <div class="cat-switch">
+          <button class="cat-btn active" data-cat="all">전체</button>
+          <button class="cat-btn" data-cat="eyes">👀 눈</button>
+          <button class="cat-btn" data-cat="hair">💇 머리카락</button>
+          <button class="cat-btn" data-cat="face">👃 코·귀</button>
+          <button class="cat-btn" data-cat="wear">👗 입은 것</button>
+        </div>
+        <p class="hint">카드의 <b>그림은 문장 내용 그대로</b> 그려져요! 난이도를 올리면 같은 친구를 더 자세히 묘사한답니다. 단어를 누르면 뜻과 발음을, 마음에 드는 문장은 <b>⭐</b>로 연습 목록에 담아보세요.</p>
+        <div id="suggestion-grid" class="card-grid five"></div>
+      </div>
+
+      <div class="step-next-wrap">
+        <button class="btn primary next-step" data-next="build">문장을 배웠어요! 다음 단계 ▶ <b>STEP 3 · 문장 만들기</b></button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 3 · 문장 만들기 ===== -->
+    <section id="tab-build" class="tab-panel">
+      <div class="step-head">
+        <span class="step-badge">STEP 3</span>
+        <div>
+          <h2 class="step-title">🧩 문장 만들기</h2>
+          <p class="step-desc">이제 직접 만들어 봐요! 고른 대로 <b>문장 + 한글 뜻 + 발음 + 캐릭터 그림</b>이 나오고, 어색한 조합은 이유도 알려줘요.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
         <div class="builder">
           <div class="build-steps">
             <div class="build-step">
@@ -114,13 +158,23 @@
           </div>
         </div>
       </div>
+
+      <div class="step-next-wrap">
+        <button class="btn primary next-step" data-next="quiz">문장을 만들었어요! 다음 단계 ▶ <b>STEP 4 · 듣고 찾기 게임</b></button>
+      </div>
     </section>
 
-    <!-- ===== 누구게? 듣고 찾기 ===== -->
+    <!-- ===== STEP 4 · 듣고 찾기 게임 ===== -->
     <section id="tab-quiz" class="tab-panel">
+      <div class="step-head">
+        <span class="step-badge">STEP 4</span>
+        <div>
+          <h2 class="step-title">🕵️ 듣고 찾기 게임</h2>
+          <p class="step-desc">영어 설명을 <b>귀로만 듣고</b> 네 명 중 알맞은 친구를 클릭하세요. 못 알아들었으면 <b>🔊 다시 듣기</b>, 글로 보고 싶으면 <b>📖 문장 보기</b>!</p>
+        </div>
+      </div>
+
       <div class="section-block">
-        <h2>🕵️ 누구게? 듣고 찾기</h2>
-        <p class="hint">수업 시간에 한 게임 그대로! 영어 설명을 <b>귀로만 듣고</b> 네 명 중 알맞은 친구를 클릭하세요. 못 알아들었으면 <b>🔊 다시 듣기</b>, 글로 보고 싶으면 <b>📖 문장 보기</b>!</p>
         <div class="quiz-controls">
           <button id="quiz-new" class="btn primary">🎲 새 문제</button>
           <button id="quiz-replay" class="btn">🔊 다시 듣기</button>
@@ -131,15 +185,25 @@
         <div id="quiz-grid" class="quiz-grid"></div>
         <div id="quiz-sentence" class="quiz-sentence hidden"></div>
       </div>
+
+      <div class="step-next-wrap">
+        <button class="btn primary next-step" data-next="practice">게임 끝! 마지막 단계 ▶ <b>STEP 5 · 말하기 연습</b></button>
+      </div>
     </section>
 
-    <!-- ===== 내 문장 연습 ===== -->
+    <!-- ===== STEP 5 · 말하기 연습 ===== -->
     <section id="tab-practice" class="tab-panel">
+      <div class="step-head">
+        <span class="step-badge">STEP 5</span>
+        <div>
+          <h2 class="step-title">🎤 말하기 연습</h2>
+          <p class="step-desc">⭐로 담은 문장을 마이크로 말해 <b>정확도</b>를 측정해요. (Chrome 권장)</p>
+        </div>
+      </div>
+
       <div class="section-block">
-        <h2>🎤 내 문장 연습</h2>
-        <p class="hint">⭐로 담은 문장을 마이크로 말해 <b>정확도</b>를 측정해요. 카드의 <b>🙋 묘사 문장</b> / <b>🧩 내 문장</b> 표시로 어디서 담았는지 알 수 있어요.</p>
         <p id="practice-empty" class="practice-empty">
-          아직 담은 문장이 없어요! <b>묘사 말하기</b>나 <b>문장 만들기</b> 탭에서 <b>⭐</b>로 연습할 문장을 담아보세요.
+          아직 담은 문장이 없어요! <b>STEP 2 문장</b>이나 <b>STEP 3 만들기</b>에서 <b>⭐</b>로 연습할 문장을 담아보세요.
         </p>
         <div id="practice-list" class="card-grid practice-grid"></div>
       </div>
@@ -147,7 +211,7 @@
   </main>
 
   <footer class="app-footer">
-    <span class="voice-status">영어 6단원 · He Has Blue Eyes! 👀</span>
+    <span class="voice-status">영어 6단원 · He Has Blue Eyes! 👀 · 단어 → 문장 → 말하기</span>
   </footer>
 
   <script src="data.js"></script>

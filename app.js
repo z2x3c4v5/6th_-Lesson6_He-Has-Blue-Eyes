@@ -347,6 +347,21 @@ function makeCard(item, opts) {
   ko.className = "ko";
   ko.textContent = item.ko;
   txt.append(en, ko);
+  // 단어 → 문장 다리: 이 단어로 만든 예문
+  if (item.ex) {
+    const ex = document.createElement("div");
+    ex.className = "card-ex";
+    const sen = document.createElement("span");
+    sen.className = "ex-sen";
+    sen.appendChild(buildWords(item.ex));
+    const play = document.createElement("button");
+    play.className = "ex-play";
+    play.textContent = "예문 ▶";
+    play.setAttribute("aria-label", "예문 듣기");
+    play.addEventListener("click", e => { e.stopPropagation(); speak(item.ex); });
+    ex.append(sen, play);
+    txt.append(ex);
+  }
   const speakBtn = document.createElement("button");
   speakBtn.className = "speak-btn";
   speakBtn.setAttribute("aria-label", "문장 듣기");
@@ -1136,6 +1151,14 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     if (btn.dataset.tab === "practice") renderPractice();
     if (btn.dataset.tab === "quiz" && !quiz) newQuiz();
     window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+});
+
+/* ---------- "다음 단계 ▶" 버튼 → 해당 STEP 탭으로 ---------- */
+document.querySelectorAll(".next-step").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = document.querySelector(`.tab-btn[data-tab="${btn.dataset.next}"]`);
+    if (target) target.click();
   });
 });
 
