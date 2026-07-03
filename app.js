@@ -1007,6 +1007,20 @@ function renderPractice() {
   updatePracticeBadge();
 }
 
+/* ---------- 헤더 미니 얼굴 퍼레이드 (장식) ---------- */
+(function renderFaceParade() {
+  const wrap = document.getElementById("face-parade");
+  if (!wrap) return;
+  const faces = [
+    { boy: true,  hairLen: "short", hairStyle: "straight", hairColor: "brown",  eyeColor: "blue" },
+    { boy: false, hairLen: "long",  hairStyle: "straight", hairColor: "blonde", eyeColor: "green", braid: true },
+    { boy: true,  hairLen: "short", hairStyle: "curly",    hairColor: "black",  eyeColor: "brown", glasses: true },
+    { boy: false, hairLen: "long",  hairStyle: "curly",    hairColor: "red",    eyeColor: "brown" },
+    { boy: true,  hairLen: "short", hairStyle: "straight", hairColor: "black",  eyeColor: "brown", hat: "cap", hatColor: "red" },
+  ];
+  wrap.innerHTML = faces.map(f => faceSVG(f, "#ffffff")).join("");
+})();
+
 /* ---------- 초기 렌더 ---------- */
 renderSuggestions();
 renderGrid("color-grid", COLOR_WORDS, { tones: true, noIndex: true });
