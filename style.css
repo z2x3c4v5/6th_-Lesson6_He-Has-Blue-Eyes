@@ -157,6 +157,27 @@ main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
 }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 .card.speaking { box-shadow: 0 0 0 3px var(--ring), var(--shadow); }
+.card.clickable { cursor: pointer; }
+
+/* ❓ 생김새 질문 배너 (질문 → 대답 순서) */
+.card-question, .br-question {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  font-weight: 800; font-size: 0.98rem; color: var(--primary-dark);
+  background: rgba(14, 165, 233, 0.12);
+  border: 1.5px solid rgba(14, 165, 233, 0.22);
+  border-radius: 13px; padding: 9px 12px; margin: 0 0 10px;
+  cursor: pointer; text-align: center; line-height: 1.35;
+  transition: background 0.15s;
+}
+.card-question:hover, .br-question:hover { background: rgba(14, 165, 233, 0.2); }
+.card-question .q-mark, .br-question .q-mark {
+  flex-shrink: 0; font-weight: 900; color: #fff;
+  background: var(--primary); border-radius: 7px;
+  padding: 1px 7px; font-size: 0.82rem;
+}
+.br-question {
+  max-width: 520px; margin: 10px auto 4px; font-size: 1.1rem;
+}
 
 /* 윗줄: CARD 태그 + 듣기 */
 .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }

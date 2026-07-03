@@ -78,6 +78,32 @@ document.addEventListener("click", e => {
   if (!popup.contains(e.target) && !e.target.classList.contains("word")) hidePopup();
 });
 
+/* ---------- 생김새 질문 (What does he/she look like?) ----------
+ * 사람을 묘사하는 문장(He/She ~)이면 먼저 물어보는 질문을 만들어요. */
+function isDescSentence(item) { return /^(He|She)\b/.test(item.en); }
+function questionForItem(item) {
+  if (!isDescSentence(item)) return null;
+  const boy = item.face ? item.face.boy : /^He\b/.test(item.en);
+  return boy ? "What does he look like?" : "What does she look like?";
+}
+/* 질문 → (잠깐 쉬고) → 대답 순서로 들려주기 */
+function speakQA(question, en, div) {
+  const on = () => div && div.classList.add("speaking");
+  const off = () => div && div.classList.remove("speaking");
+  if (!question) { speak(en, null, on, off); return; }
+  speak(question, null, on, () => {
+    setTimeout(() => speak(en, null, null, off), 220);
+  });
+}
+/* 질문 배너 만들기 (누르면 질문만 다시 듣기) */
+function makeQuestionEl(question) {
+  const q = document.createElement("div");
+  q.className = "card-question";
+  q.innerHTML = `<span class="q-mark">Q.</span> ${question}`;
+  q.addEventListener("click", e => { e.stopPropagation(); speak(question); });
+  return q;
+}
+
 /* ---------- 클릭 가능한 단어로 문장 만들기 ---------- */
 function buildWords(sentence) {
   const frag = document.createDocumentFragment();
@@ -287,10 +313,12 @@ function makeCard(item, opts) {
   const div = document.createElement("div");
   div.className = "card" + (opts.tone != null ? " tone-" + opts.tone : "");
 
-  function speakSentence() {
-    speak(item.en, null,
-      () => div.classList.add("speaking"),
-      () => div.classList.remove("speaking"));
+  const question = questionForItem(item);
+  function speakSentence() { speakQA(question, item.en, div); }
+  // 묘사 문장 카드는 어디를 눌러도 "질문 → 대답"이 들려요
+  if (question) {
+    div.classList.add("clickable");
+    div.addEventListener("click", () => speakSentence());
   }
 
   // 윗줄: 태그 + 듣기
@@ -326,7 +354,9 @@ function makeCard(item, opts) {
   speakBtn.addEventListener("click", e => { e.stopPropagation(); speakSentence(); });
   box.append(txt, speakBtn);
 
-  div.append(top, visual, box);
+  div.append(top, visual);
+  if (question) div.append(makeQuestionEl(question));
+  div.append(box);
 
   // ⭐ 연습 목록 담기 버튼
   if (opts.selectable) {
@@ -639,6 +669,8 @@ function showGoodResult(box, en, ko) {
   box.className = "build-result ok";
   box.innerHTML = "";
 
+  const question = buildSubject.boy ? "What does he look like?" : "What does she look like?";
+
   const badge = document.createElement("div");
   badge.className = "br-badge";
   badge.textContent = "✅ 멋진 문장이에요!";
@@ -647,6 +679,11 @@ function showGoodResult(box, en, ko) {
   const preview = document.createElement("div");
   preview.className = "br-preview";
   preview.innerHTML = faceSVG(face, "#ffffff");
+
+  const qEl = document.createElement("div");
+  qEl.className = "br-question";
+  qEl.innerHTML = `<span class="q-mark">Q.</span> ${question}`;
+  qEl.addEventListener("click", () => speak(question));
 
   const enEl = document.createElement("div");
   enEl.className = "br-sentence";
@@ -660,8 +697,8 @@ function showGoodResult(box, en, ko) {
   actions.className = "br-actions";
   const listenBtn = document.createElement("button");
   listenBtn.className = "btn primary";
-  listenBtn.textContent = "🔊 듣기";
-  listenBtn.addEventListener("click", () => speak(en));
+  listenBtn.textContent = "🔊 질문+대답 듣기";
+  listenBtn.addEventListener("click", () => speakQA(question, en, null));
 
   const item = { en, ko, emoji: buildSubject.emoji, face, type: "combo" };
   const starBtn = document.createElement("button");
@@ -671,10 +708,10 @@ function showGoodResult(box, en, ko) {
   starBtn.addEventListener("click", () => { toggleSelect(item, "combo"); updateBuildResult(); });
 
   actions.append(listenBtn, starBtn);
-  box.append(badge, preview, enEl, koEl, actions);
+  box.append(badge, preview, qEl, enEl, koEl, actions);
 
-  // 새로운 문장이 완성되면 한 번만 들려주기 (별표 토글로 다시 그려도 재생 안 함)
-  if (en !== lastBuilt) { lastBuilt = en; speak(en); }
+  // 새로운 문장이 완성되면 한 번만 "질문 → 대답"으로 들려주기
+  if (en !== lastBuilt) { lastBuilt = en; speakQA(question, en, null); }
 }
 
 function randOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -994,10 +1031,11 @@ function makePracticeCard(item) {
   ko.className = "ko";
   ko.textContent = item.ko;
   txt.append(en, ko);
+  const question = questionForItem(item);
   const speakBtn = document.createElement("button");
   speakBtn.className = "speak-btn";
   speakBtn.textContent = "🔊";
-  speakBtn.addEventListener("click", () => speak(item.en));
+  speakBtn.addEventListener("click", e => { e.stopPropagation(); speakQA(question, item.en, div); });
   box.append(txt, speakBtn);
 
   const micArea = document.createElement("div");
@@ -1056,7 +1094,9 @@ function makePracticeCard(item) {
     });
   });
 
-  div.append(top, visual, box, micArea, statsEl, fb);
+  div.append(top, visual);
+  if (question) div.append(makeQuestionEl(question));
+  div.append(box, micArea, statsEl, fb);
   return div;
 }
 
