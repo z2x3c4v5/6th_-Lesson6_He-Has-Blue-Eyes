@@ -316,9 +316,13 @@ function makeCard(item, opts) {
   const question = questionForItem(item);
   function speakSentence() { speakQA(question, item.en, div); }
   // 묘사 문장 카드는 어디를 눌러도 "질문 → 대답"이 들려요
+  // (스스로 확인 모드로 가려져 있으면 질문만 들려줘 스스로 말해보게 함)
   if (question) {
     div.classList.add("clickable");
-    div.addEventListener("click", () => speakSentence());
+    div.addEventListener("click", () => {
+      if (div.dataset.covered === "1") speak(question);
+      else speakSentence();
+    });
   }
 
   // 윗줄: 태그 + 듣기
@@ -373,6 +377,29 @@ function makeCard(item, opts) {
   if (question) div.append(makeQuestionEl(question));
   div.append(box);
 
+  // 🙈 스스로 확인 모드: 정답(문장)을 가리고 그림+질문만 보고 말해보게 하기
+  if (opts.cover && question) {
+    box.style.display = "none";
+    div.dataset.covered = "1";
+    const cover = document.createElement("div");
+    cover.className = "answer-cover";
+    const t = document.createElement("div");
+    t.className = "cover-text";
+    t.innerHTML = "🙈 그림과 질문을 보고<br><b>문장을 말해 보세요!</b>";
+    const reveal = document.createElement("button");
+    reveal.className = "reveal-btn";
+    reveal.textContent = "정답 확인 👀";
+    reveal.addEventListener("click", e => {
+      e.stopPropagation();
+      box.style.display = "";
+      div.dataset.covered = "0";
+      cover.remove();
+      speakSentence();
+    });
+    cover.append(t, reveal);
+    div.append(cover);
+  }
+
   // ⭐ 연습 목록 담기 버튼
   if (opts.selectable) {
     const sel = document.createElement("button");
@@ -397,6 +424,7 @@ function renderGrid(id, list, opts) {
     const cardOpts = {};
     if (opts.tones) { cardOpts.tone = i % 6; if (!opts.noIndex) cardOpts.index = i + 1; }
     if (opts.selectable) { cardOpts.selectable = true; cardOpts.selectType = opts.selectType; }
+    if (opts.cover) cardOpts.cover = true;
     grid.appendChild(makeCard(item, cardOpts));
   });
 }
@@ -404,6 +432,7 @@ function renderGrid(id, list, opts) {
 /* ---------- 난이도(초급/중급/고급) + 묘사 종류 ---------- */
 let currentLevel = "beginner";
 let currentCategory = "all";
+let studyHide = false;   // 🙈 스스로 확인 모드 (문장 가리기)
 
 function renderSuggestions() {
   const lvl = DESC_LEVELS[currentLevel];
@@ -413,7 +442,20 @@ function renderSuggestions() {
       view.push(Object.assign({}, item, { face: DESC_FACES[i] }));
     }
   });
-  renderGrid("suggestion-grid", view, { tones: true, selectable: true });
+  renderGrid("suggestion-grid", view, { tones: true, selectable: true, cover: studyHide });
+}
+
+/* 🙈 스스로 확인 모드 토글 */
+const studyToggleBtn = document.getElementById("study-toggle");
+if (studyToggleBtn) {
+  studyToggleBtn.addEventListener("click", () => {
+    studyHide = !studyHide;
+    studyToggleBtn.classList.toggle("on", studyHide);
+    studyToggleBtn.textContent = studyHide ? "👀 문장 다시 보기" : "🙈 문장 가리고 스스로 말하기";
+    synth.cancel();
+    hidePopup();
+    renderSuggestions();
+  });
 }
 
 document.querySelectorAll(".level-btn").forEach(btn => {
@@ -763,169 +805,6 @@ document.getElementById("build-clear").addEventListener("click", () => {
 });
 
 /* ===========================================================
- * 🕵️ 누구게? 듣고 찾기 퀴즈
- * =========================================================== */
-let quiz = null;              // { chars, answer, sentences, enText, koText, done, tries }
-let quizScore = { right: 0, total: 0 };
-
-function randomQuizChar(boy) {
-  return {
-    boy,
-    hairLen: randOf(["long", "short"]),
-    hairStyle: randOf(["straight", "curly"]),
-    hairColor: randOf(QUIZ_HAIR_COLORS),
-    eyeColor: randOf(QUIZ_EYE_COLORS),
-  };
-}
-
-/* 문제에서 '말해 주는' 특징만 뽑은 서명 (보기끼리 겹치지 않게) */
-function quizSignature(c, spec) {
-  const parts = [c.hairLen, c.hairColor];
-  if (spec.sayStyle) parts.push(c.hairStyle);
-  parts.push(spec.second === "eyes" ? c.eyeColor : (c.wear ? c.wear.key : "none"));
-  return parts.join("|");
-}
-
-function newQuiz() {
-  const boy = Math.random() < 0.5;
-  const spec = {
-    sayStyle: Math.random() < 0.5,
-    second: Math.random() < 0.5 ? "eyes" : "wear",
-  };
-
-  // 정답 캐릭터
-  const answer = randomQuizChar(boy);
-  if (spec.second === "wear") {
-    const pool = QUIZ_WEARS.filter(w => boy ? !w.girlOnly : true);
-    answer.wear = randOf(pool);
-  }
-
-  // 오답 3명: 설명에 나오는 특징 중 1~2개를 다르게
-  const used = new Set([quizSignature(answer, spec)]);
-  const chars = [answer];
-  let guard = 0;
-  while (chars.length < 4 && guard++ < 60) {
-    const c = randomQuizChar(boy);
-    if (spec.second === "wear") {
-      const pool = QUIZ_WEARS.filter(w => boy ? !w.girlOnly : true);
-      if (Math.random() < 0.75) c.wear = randOf(pool);
-    }
-    const sig = quizSignature(c, spec);
-    if (used.has(sig)) continue;
-    used.add(sig);
-    chars.push(c);
-  }
-  // 순서 섞기
-  for (let i = chars.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [chars[i], chars[j]] = [chars[j], chars[i]];
-  }
-
-  // 설명 문장 만들기
-  const subj = boy ? "He" : "She";
-  const subjKo = boy ? "그는" : "그녀는";
-  const s1 = `${subj} has ${answer.hairLen}${spec.sayStyle ? " " + answer.hairStyle : ""} ${answer.hairColor} hair.`;
-  const k1 = `${subjKo} ${answer.hairLen === "long" ? "긴" : "짧은"}${spec.sayStyle ? (answer.hairStyle === "curly" ? " 곱슬곱슬한" : " 곧은") : ""} ${QUIZ_HAIR_COLOR_KO[answer.hairColor]} 머리를 가지고 있어요.`;
-  let s2, k2;
-  if (spec.second === "eyes") {
-    s2 = `${subj} has ${answer.eyeColor} eyes.`;
-    k2 = `${subjKo} ${QUIZ_EYE_COLOR_KO[answer.eyeColor]} 눈을 가지고 있어요.`;
-  } else {
-    s2 = `${subj}'s wearing ${answer.wear.en}.`;
-    k2 = `${subjKo} ${answer.wear.ko} 있어요.`;
-  }
-
-  quiz = {
-    chars, answer, spec,
-    enText: s1 + " " + s2,
-    koText: k1 + " " + k2,
-    done: false, firstTry: true,
-  };
-  renderQuiz();
-  document.getElementById("quiz-feedback").className = "quiz-feedback";
-  document.getElementById("quiz-feedback").textContent = "👂 설명을 잘 듣고 알맞은 친구를 클릭하세요!";
-  document.getElementById("quiz-sentence").classList.add("hidden");
-  speak(quiz.enText);
-}
-
-function quizCharFace(c) {
-  const f = {
-    boy: c.boy,
-    hairLen: c.hairLen, hairStyle: c.hairStyle, hairColor: c.hairColor,
-    eyeColor: c.eyeColor, eyeSize: "big",   // 눈 색이 잘 보이도록 크게
-  };
-  if (c.wear) Object.assign(f, c.wear.apply);
-  return f;
-}
-
-function renderQuiz() {
-  const grid = document.getElementById("quiz-grid");
-  grid.innerHTML = "";
-  quiz.chars.forEach((c, i) => {
-    const card = document.createElement("button");
-    card.className = "qcard";
-    card.innerHTML = faceSVG(quizCharFace(c), FACE_BGS[i % FACE_BGS.length]);
-    const label = document.createElement("div");
-    label.className = "qcard-num";
-    label.textContent = ["①", "②", "③", "④"][i];
-    card.appendChild(label);
-    card.addEventListener("click", () => onQuizPick(card, c));
-    grid.appendChild(card);
-  });
-  updateQuizScore();
-}
-
-function onQuizPick(card, c) {
-  if (!quiz || quiz.done) return;
-  const fb = document.getElementById("quiz-feedback");
-  if (c === quiz.answer) {
-    quiz.done = true;
-    quizScore.total++;
-    if (quiz.firstTry) quizScore.right++;
-    card.classList.add("correct");
-    document.querySelectorAll(".qcard").forEach(q => { if (q !== card) q.classList.add("dim"); });
-    fb.className = "quiz-feedback good";
-    fb.textContent = quiz.firstTry ? "🎉 정답이에요! 한 번에 찾았어요!" : "🎉 정답이에요!";
-    showQuizSentence();
-    speak("Great job!");
-    updateQuizScore();
-  } else {
-    quiz.firstTry = false;
-    card.classList.add("wrong");
-    setTimeout(() => card.classList.remove("wrong"), 600);
-    fb.className = "quiz-feedback bad";
-    fb.textContent = "🙈 아니에요! 다시 한번 잘 들어보세요.";
-    speak(quiz.enText);
-  }
-}
-
-function showQuizSentence() {
-  const boxEl = document.getElementById("quiz-sentence");
-  boxEl.classList.remove("hidden");
-  boxEl.innerHTML = "";
-  const en = document.createElement("div");
-  en.className = "en";
-  en.appendChild(buildWords(quiz.enText));
-  const ko = document.createElement("div");
-  ko.className = "ko";
-  ko.textContent = quiz.koText;
-  boxEl.append(en, ko);
-}
-
-function updateQuizScore() {
-  document.getElementById("quiz-score").textContent =
-    `한 번에 맞힘 ${quizScore.right} / ${quizScore.total}문제`;
-}
-
-document.getElementById("quiz-new").addEventListener("click", newQuiz);
-document.getElementById("quiz-replay").addEventListener("click", () => {
-  if (quiz) speak(quiz.enText);
-});
-document.getElementById("quiz-show").addEventListener("click", () => {
-  if (quiz) showQuizSentence();
-});
-
-/* ===========================================================
  * 내 문장 연습 (선택 → 말하기/녹음 → 정확도 → 연습 횟수)
  * =========================================================== */
 let selected = new Map();
@@ -1137,7 +1016,6 @@ renderGrid("wear-grid", WEAR_WORDS, { tones: true, noIndex: true });
 renderBuilder();
 updateBuildResult();
 updatePracticeBadge();
-updateQuizScore();
 
 /* ---------- 탭 전환 ---------- */
 document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -1149,7 +1027,6 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     synth.cancel();
     hidePopup();
     if (btn.dataset.tab === "practice") renderPractice();
-    if (btn.dataset.tab === "quiz" && !quiz) newQuiz();
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 });

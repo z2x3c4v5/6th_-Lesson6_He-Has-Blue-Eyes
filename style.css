@@ -177,6 +177,38 @@ body {
   .pat-txt { font-size: 0.98rem; }
 }
 
+/* ===== 🙈 스스로 확인 모드 ===== */
+.study-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin: 2px 0 14px;
+}
+.study-toggle {
+  flex-shrink: 0; border: 2px solid rgba(14, 165, 233, 0.32); cursor: pointer;
+  padding: 10px 18px; border-radius: 999px; font-weight: 800; font-size: 0.92rem;
+  background: rgba(255, 255, 255, 0.85); color: var(--primary-dark);
+  box-shadow: var(--shadow-sm); transition: background 0.2s, color 0.2s, transform 0.1s;
+}
+.study-toggle.on { background: linear-gradient(135deg, var(--sun), var(--accent)); color: #fff; border-color: transparent; }
+.study-toggle:active { transform: scale(0.96); }
+.study-hint { color: var(--muted); font-size: 0.86rem; line-height: 1.4; }
+
+.answer-cover {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 20px 16px; border-radius: 18px; text-align: center;
+  border: 2px dashed var(--primary);
+  background:
+    repeating-linear-gradient(45deg, #e6f7fb, #e6f7fb 11px, #d7f0f6 11px, #d7f0f6 22px);
+}
+.cover-text { color: var(--primary-dark); font-weight: 700; font-size: 0.96rem; line-height: 1.45; }
+.reveal-btn {
+  border: none; cursor: pointer; padding: 11px 22px; border-radius: 13px;
+  font-weight: 800; font-size: 0.95rem; color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: var(--shadow-sm); transition: filter 0.15s, transform 0.1s;
+}
+.reveal-btn:hover { filter: brightness(1.06); }
+.reveal-btn:active { transform: scale(0.95); }
+
 main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: fade 0.28s ease; }

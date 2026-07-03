@@ -21,8 +21,7 @@
     <button class="tab-btn active" data-tab="words"><span class="step-no">1</span> 🎨 단어</button>
     <button class="tab-btn" data-tab="desc"><span class="step-no">2</span> 👀 문장</button>
     <button class="tab-btn" data-tab="build"><span class="step-no">3</span> 🧩 만들기</button>
-    <button class="tab-btn" data-tab="quiz"><span class="step-no">4</span> 🕵️ 게임</button>
-    <button class="tab-btn" data-tab="practice"><span class="step-no">5</span> 🎤 말하기 <span id="practice-count" class="tab-count">0</span></button>
+    <button class="tab-btn" data-tab="practice"><span class="step-no">4</span> 🎤 말하기 <span id="practice-count" class="tab-count">0</span></button>
   </nav>
 
   <div class="toolbar">
@@ -75,7 +74,7 @@
         <span class="step-badge">STEP 2</span>
         <div>
           <h2 class="step-title">👀 문장 배우기</h2>
-          <p class="step-desc">배운 단어가 어떻게 문장이 되는지 봐요. 카드를 누르면 <b>질문 → 대답</b> 순서로 들려줘요!</p>
+          <p class="step-desc">배운 단어가 어떻게 문장이 되는지 봐요. 카드를 누르면 <b>질문 → 대답</b> 순서로 들려줘요! 자신 있으면 <b>🙈 문장 가리고 스스로 말하기</b>로 시험해 보세요.</p>
         </div>
       </div>
 
@@ -113,6 +112,10 @@
           <button class="cat-btn" data-cat="wear">👗 입은 것</button>
         </div>
         <p class="hint">카드의 <b>그림은 문장 내용 그대로</b> 그려져요! 난이도를 올리면 같은 친구를 더 자세히 묘사한답니다. 단어를 누르면 뜻과 발음을, 마음에 드는 문장은 <b>⭐</b>로 연습 목록에 담아보세요.</p>
+        <div class="study-row">
+          <button id="study-toggle" class="study-toggle">🙈 문장 가리고 스스로 말하기</button>
+          <span class="study-hint">그림과 질문만 보고 문장을 말한 뒤, <b>정답 확인 👀</b>으로 맞춰봐요!</span>
+        </div>
         <div id="suggestion-grid" class="card-grid five"></div>
       </div>
 
@@ -160,41 +163,14 @@
       </div>
 
       <div class="step-next-wrap">
-        <button class="btn primary next-step" data-next="quiz">문장을 만들었어요! 다음 단계 ▶ <b>STEP 4 · 듣고 찾기 게임</b></button>
+        <button class="btn primary next-step" data-next="practice">문장을 만들었어요! 마지막 단계 ▶ <b>STEP 4 · 말하기 연습</b></button>
       </div>
     </section>
 
-    <!-- ===== STEP 4 · 듣고 찾기 게임 ===== -->
-    <section id="tab-quiz" class="tab-panel">
-      <div class="step-head">
-        <span class="step-badge">STEP 4</span>
-        <div>
-          <h2 class="step-title">🕵️ 듣고 찾기 게임</h2>
-          <p class="step-desc">영어 설명을 <b>귀로만 듣고</b> 네 명 중 알맞은 친구를 클릭하세요. 못 알아들었으면 <b>🔊 다시 듣기</b>, 글로 보고 싶으면 <b>📖 문장 보기</b>!</p>
-        </div>
-      </div>
-
-      <div class="section-block">
-        <div class="quiz-controls">
-          <button id="quiz-new" class="btn primary">🎲 새 문제</button>
-          <button id="quiz-replay" class="btn">🔊 다시 듣기</button>
-          <button id="quiz-show" class="btn ghost">📖 문장 보기</button>
-          <span id="quiz-score" class="quiz-score"></span>
-        </div>
-        <div id="quiz-feedback" class="quiz-feedback">🎲 <b>새 문제</b> 버튼을 눌러 시작해요!</div>
-        <div id="quiz-grid" class="quiz-grid"></div>
-        <div id="quiz-sentence" class="quiz-sentence hidden"></div>
-      </div>
-
-      <div class="step-next-wrap">
-        <button class="btn primary next-step" data-next="practice">게임 끝! 마지막 단계 ▶ <b>STEP 5 · 말하기 연습</b></button>
-      </div>
-    </section>
-
-    <!-- ===== STEP 5 · 말하기 연습 ===== -->
+    <!-- ===== STEP 4 · 말하기 연습 ===== -->
     <section id="tab-practice" class="tab-panel">
       <div class="step-head">
-        <span class="step-badge">STEP 5</span>
+        <span class="step-badge">STEP 4</span>
         <div>
           <h2 class="step-title">🎤 말하기 연습</h2>
           <p class="step-desc">⭐로 담은 문장을 마이크로 말해 <b>정확도</b>를 측정해요. (Chrome 권장)</p>
