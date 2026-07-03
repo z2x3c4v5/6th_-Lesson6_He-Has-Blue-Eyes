@@ -198,38 +198,62 @@ const COLOR_WORDS = [
   { en: "blonde", ko: "금발",   swatch: "#fcd34d" },
 ];
 
-/* ===== 📏 크기·모양 낱말 (필수: big/small/straight/curly) ===== */
+/* ===== 📏 크기·모양 낱말 (필수: big/small/straight/curly) =====
+ * face: 뜻을 눈으로 보여주는 캐릭터 그림 (highlight로 해당 부분 강조) */
 const SIZE_WORDS = [
-  { en: "big",      ko: "큰",           emoji: "🐘" },
-  { en: "small",    ko: "작은",         emoji: "🐭" },
-  { en: "long",     ko: "긴",           emoji: "📏" },
-  { en: "short",    ko: "짧은",         emoji: "✂️" },
-  { en: "straight", ko: "곧은 (생머리)", emoji: "➖" },
-  { en: "curly",    ko: "곱슬곱슬한",   emoji: "➰" },
+  { en: "big",      ko: "큰",           emoji: "🐘",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", eyeSize: "big",   highlight: "eyes" } },
+  { en: "small",    ko: "작은",         emoji: "🐭",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", eyeSize: "small", highlight: "eyes" } },
+  { en: "long",     ko: "긴",           emoji: "📏",
+    face: { boy: false, hairLen: "long",  hairStyle: "straight", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
+  { en: "short",    ko: "짧은",         emoji: "✂️",
+    face: { boy: true,  hairLen: "short", hairStyle: "straight", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
+  { en: "straight", ko: "곧은 (생머리)", emoji: "➖",
+    face: { boy: false, hairLen: "long",  hairStyle: "straight", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
+  { en: "curly",    ko: "곱슬곱슬한",   emoji: "➰",
+    face: { boy: false, hairLen: "long",  hairStyle: "curly", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
 ];
 
 /* ===== 🧑 신체 낱말 (필수: eyes/nose/hair/ears) ===== */
 const BODY_WORDS = [
-  { en: "eyes",  ko: "눈",       emoji: "👀" },
-  { en: "nose",  ko: "코",       emoji: "👃" },
-  { en: "ears",  ko: "귀",       emoji: "👂" },
-  { en: "hair",  ko: "머리카락", emoji: "💇" },
-  { en: "mouth", ko: "입",       emoji: "👄" },
-  { en: "face",  ko: "얼굴",     emoji: "🙂" },
+  { en: "eyes",  ko: "눈",       emoji: "👀",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "blue", eyeSize: "big", highlight: "eyes" } },
+  { en: "nose",  ko: "코",       emoji: "👃",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", highlight: "nose" } },
+  { en: "ears",  ko: "귀",       emoji: "👂",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", earSize: "big", highlight: "ears" } },
+  { en: "hair",  ko: "머리카락", emoji: "💇",
+    face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", highlight: "hair" } },
+  { en: "mouth", ko: "입",       emoji: "👄",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", highlight: "mouth" } },
+  { en: "face",  ko: "얼굴",     emoji: "🙂",
+    face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", highlight: "face" } },
 ];
 
-/* ===== 👗 옷·소품 낱말 (필수: dress/hat/glasses 등) ===== */
+/* ===== 👗 옷·소품 낱말 (필수: dress/hat/glasses 등) =====
+ * face: 그 옷·소품을 착용한 캐릭터 그림 */
 const WEAR_WORDS = [
-  { en: "dress",      ko: "드레스",        emoji: "👗" },
-  { en: "hat",        ko: "모자",          emoji: "👒" },
-  { en: "cap",        ko: "야구 모자",     emoji: "🧢" },
-  { en: "cowboy hat", ko: "카우보이 모자", emoji: "🤠" },
-  { en: "glasses",    ko: "안경",          emoji: "👓" },
-  { en: "sunglasses", ko: "선글라스",      emoji: "🕶️" },
-  { en: "mask",       ko: "마스크",        emoji: "😷" },
-  { en: "boots",      ko: "부츠",          emoji: "👢" },
-  { en: "helmet",     ko: "헬멧",          emoji: "⛑️" },
-  { en: "braid",      ko: "땋은 머리",     emoji: "🎀" },
+  { en: "dress",      ko: "드레스",        emoji: "👗",
+    face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", dress: "pink" } },
+  { en: "hat",        ko: "모자",          emoji: "👒",
+    face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", hat: "sun", hatColor: "yellow" } },
+  { en: "cap",        ko: "야구 모자",     emoji: "🧢",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", hat: "cap", hatColor: "blue" } },
+  { en: "cowboy hat", ko: "카우보이 모자", emoji: "🤠",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", hat: "cowboy" } },
+  { en: "glasses",    ko: "안경",          emoji: "👓",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", glasses: true } },
+  { en: "sunglasses", ko: "선글라스",      emoji: "🕶️",
+    face: { boy: false, hairLen: "long", hairColor: "black", eyeColor: "brown", sunglasses: true } },
+  { en: "mask",       ko: "마스크",        emoji: "😷",
+    face: { boy: true,  hairLen: "short", hairColor: "black", eyeColor: "brown", mask: true } },
+  { en: "boots",      ko: "부츠",          emoji: "👢",
+    face: { boy: true,  hairLen: "short", hairColor: "brown", eyeColor: "brown", boots: true, bootColor: "brown" } },
+  { en: "helmet",     ko: "헬멧",          emoji: "⛑️",
+    face: { boy: true,  hairLen: "short", hairColor: "black", eyeColor: "brown", hat: "helmet", hatColor: "red" } },
+  { en: "braid",      ko: "땋은 머리",     emoji: "🎀",
+    face: { boy: false, hairLen: "long", hairColor: "blonde", eyeColor: "blue", braid: true } },
 ];
 
 /* ===========================================================

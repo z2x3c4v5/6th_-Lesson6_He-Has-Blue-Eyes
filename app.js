@@ -231,6 +231,26 @@ function faceSVG(f, bg) {
     p.push(`<path d="M108,196 L108,212 L136,212 L136,206 Q136,199 126,199 L122,199 L122,196 Z" fill="${bC}"/>`);
   }
 
+  // 강조 표시 (낱말 카드에서 "이 부분!" 하고 짚어주기)
+  if (f.highlight) {
+    const glow = (cx, cy, rx, ry) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#fb923c" opacity="0.16"/>`;
+    const ring = (cx, cy, rx, ry) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="#f97316" stroke-width="3.5" stroke-dasharray="6 5" opacity="0.95"/>`;
+    const spec = {
+      eyes:  [100, 94, 41, 18],
+      nose:  [100, 113, 13, 17],
+      hair:  [100, 62, 56, 34],
+      mouth: [100, 127, 23, 12],
+      face:  [100, 98, 54, 56],
+    };
+    if (f.highlight === "ears") {
+      p.push(glow(54, 98, 15, 15), glow(146, 98, 15, 15));
+      p.push(ring(54, 98, 14, 14), ring(146, 98, 14, 14));
+    } else if (spec[f.highlight]) {
+      const s = spec[f.highlight];
+      p.push(glow(s[0], s[1], s[2], s[3]), ring(s[0], s[1], s[2], s[3]));
+    }
+  }
+
   return `<svg class="face-svg" viewBox="0 0 200 222" role="img" aria-label="캐릭터 그림">
     <rect x="0" y="0" width="200" height="222" rx="18" fill="${bg || "#f0f9ff"}"/>
     ${p.join("")}
