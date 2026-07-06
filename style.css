@@ -267,6 +267,74 @@ body {
   padding: 7px 14px; border-radius: 10px;
 }
 
+/* ===== 🗂️ 학습지(정보 차) 활동 ===== */
+.q-card {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(99, 102, 241, 0.25);
+  border-radius: 18px; padding: 14px 18px; box-shadow: var(--shadow-sm);
+}
+.q-card-label { flex-shrink: 0; font-weight: 800; color: var(--primary-dark); }
+.q-card-body { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
+.q-card-line {
+  flex: 1; min-width: 240px; cursor: pointer; text-align: left;
+  border: 1.5px solid rgba(99, 102, 241, 0.22); background: rgba(99, 102, 241, 0.08);
+  color: var(--primary-dark); font-family: var(--font); font-weight: 800; font-size: 1.02rem;
+  padding: 11px 14px; border-radius: 12px; transition: background 0.15s;
+}
+.q-card-line:hover { background: rgba(99, 102, 241, 0.16); }
+.q-card-line .q-ko { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+
+.mission-card { display: flex; flex-direction: column; }
+.mission-hint {
+  font-size: 0.95rem; font-weight: 700; color: var(--text);
+  background: #fff7d6; border: 1.5px solid rgba(245, 158, 11, 0.4);
+  border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; text-align: center;
+}
+.mission-hint .mh-label {
+  font-size: 0.72rem; font-weight: 800; color: #fff; background: var(--wish);
+  padding: 2px 8px; border-radius: 999px; margin-right: 6px;
+}
+.mission-answer { margin-bottom: 10px; }
+.mission-shown { animation: fade 0.25s ease; }
+.mission-shown.hidden { display: none; }
+.mission-shown .en { font-weight: 700; font-size: 1.05rem; color: #2c2740; line-height: 1.4; margin-bottom: 3px; }
+.mission-shown .ko { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; }
+.btn.small, .reveal-btn.small { font-size: 0.85rem; padding: 8px 14px; border-radius: 11px; }
+.reveal-btn.small { width: 100%; }
+.mission-build { width: 100%; margin-top: auto; }
+
+.rehearsal {
+  margin-top: 30px; background: rgba(255, 255, 255, 0.55);
+  border: 2px dashed rgba(99, 102, 241, 0.3); border-radius: 22px; padding: 18px 20px;
+}
+.rehearsal > h2 { margin-top: 4px; }
+.reh-box { display: flex; gap: 18px; align-items: stretch; flex-wrap: wrap; margin-top: 6px; }
+.reh-face {
+  flex-shrink: 0; width: 168px;
+  background: #fff; border-radius: 18px; box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; justify-content: center; padding: 8px;
+}
+.reh-face svg { width: 150px; height: auto; border-radius: 14px; }
+.reh-right { flex: 1; min-width: 260px; display: flex; flex-direction: column; gap: 12px; }
+.reh-feedback {
+  font-weight: 800; font-size: 1.02rem; color: var(--primary-dark);
+  background: rgba(255, 255, 255, 0.75); border-radius: 14px; padding: 14px 16px;
+  min-height: 54px; display: flex; align-items: center;
+}
+.reh-feedback.good { color: var(--pos); background: #ecfdf5; }
+.reh-feedback.bad { color: var(--neg); background: #fff1f2; }
+.reh-feedback .heard { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+.reh-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.reh-controls .mic-btn { width: 58px; height: 58px; font-size: 1.5rem; }
+.reh-answer {
+  background: rgba(255, 255, 255, 0.85); border: 2px solid rgba(99, 102, 241, 0.22);
+  border-radius: 14px; padding: 12px 14px; animation: fade 0.25s ease;
+}
+.reh-answer.hidden { display: none; }
+.reh-answer .en { font-weight: 800; font-size: 1.15rem; color: var(--primary-dark); line-height: 1.4; }
+.reh-answer .ko { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
 /* ===== 🙈 스스로 확인 모드 ===== */
 .study-row {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;

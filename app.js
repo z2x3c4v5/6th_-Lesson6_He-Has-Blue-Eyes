@@ -156,8 +156,8 @@ function faceSVG(f, bg) {
     p.push(`<path d="M76,150 L124,150 L146,219 L54,219 Z" fill="${dC}" stroke="rgba(0,0,0,0.1)" stroke-width="1.5"/>`);
     p.push(`<path d="M88,150 Q100,160 112,150 L112,158 Q100,168 88,158 Z" fill="rgba(255,255,255,0.55)"/>`);
   } else {
-    const sC = f.shirt ? cHex(f.shirt) : (f.boy === false ? "#f9a8d4" : "#7dd3fc");
-    p.push(`<path d="M66,156 Q100,142 134,156 L140,219 L60,219 Z" fill="${sC}" stroke="rgba(0,0,0,0.08)" stroke-width="1.5"/>`);
+    const sC = (f.shirt && f.shirt !== true) ? cHex(f.shirt) : (f.boy === false ? "#f9a8d4" : "#7dd3fc");
+    p.push(`<path d="M66,156 Q100,142 134,156 L140,219 L60,219 Z" fill="${sC}" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>`);
   }
 
   // 목
@@ -221,11 +221,12 @@ function faceSVG(f, bg) {
   // 안경 / 선글라스
   if (f.glasses || f.sunglasses) {
     const lens = f.sunglasses ? `fill="#1f2937" opacity="0.92"` : `fill="none"`;
-    p.push(`<circle cx="81" cy="94" r="13" ${lens} stroke="#374151" stroke-width="3"/>`);
-    p.push(`<circle cx="119" cy="94" r="13" ${lens} stroke="#374151" stroke-width="3"/>`);
-    p.push(`<line x1="94" y1="94" x2="106" y2="94" stroke="#374151" stroke-width="3"/>`);
-    p.push(`<line x1="68" y1="92" x2="54" y2="90" stroke="#374151" stroke-width="3"/>`);
-    p.push(`<line x1="132" y1="92" x2="146" y2="90" stroke="#374151" stroke-width="3"/>`);
+    const frame = f.sunglasses ? "#374151" : cHex(f.glassesColor, "#374151");
+    p.push(`<circle cx="81" cy="94" r="13" ${lens} stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<circle cx="119" cy="94" r="13" ${lens} stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<line x1="94" y1="94" x2="106" y2="94" stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<line x1="68" y1="92" x2="54" y2="90" stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<line x1="132" y1="92" x2="146" y2="90" stroke="${frame}" stroke-width="3"/>`);
   }
 
   // 모자류 (머리 위에 그려서 앞머리를 덮음)
@@ -716,9 +717,11 @@ function buildPreviewFace() {
     Object.assign(f, mlItem.apply);
     const col = mlItemColor ? mlItemColor.en : null;
     if (mlItem.apply.dress) f.dress = col || "pink";
+    if (mlItem.apply.shirt) f.shirt = col || (f.boy ? "blue" : "pink");
     if (mlItem.apply.hat) f.hatColor = col || undefined;
     if (mlItem.apply.mask && col) f.maskColor = col;
     if (mlItem.apply.boots && col) f.bootColor = col;
+    if (mlItem.key === "glasses" && col) f.glassesColor = col;
   }
   return f;
 }
@@ -1063,6 +1066,144 @@ function renderPractice() {
   updatePracticeBadge();
 }
 
+/* ===========================================================
+ * 🗂️ 학습지(정보 차) 활동 준비 모드
+ * =========================================================== */
+function charQuestion(ch) {
+  return ch.face.boy ? "What does he look like?" : "What does she look like?";
+}
+
+/* 이 인물을 '문장 만들기(STEP 3)'에 그대로 불러오기 */
+function loadBuildFromChar(ch) {
+  const b = ch.build;
+  mlBoy = b.boy;
+  mlPart = b.part ? BUILD_PARTS.find(p => p.key === b.part) : null;
+  mlAdjs = Object.assign({}, b.adjs || {});
+  if (b.item) {
+    mlWearOn = true;
+    mlItem = BUILD_ITEMS.find(it => it.key === b.item) || null;
+    mlItemColor = b.itemColor ? (ITEM_COLORS.find(c => c.en === b.itemColor) || null) : null;
+  } else {
+    mlWearOn = false; mlItem = null; mlItemColor = null;
+  }
+  closeMlPop();
+  renderMadlib();
+  updateBuildResult();
+  const bt = document.querySelector('.tab-btn[data-tab="build"]');
+  if (bt) bt.click();
+}
+
+/* 미션 카드 (활동지 인물 1명) */
+function makeMissionCard(ch, idx) {
+  const card = document.createElement("div");
+  card.className = "card mission-card tone-" + (idx % 6);
+
+  const top = document.createElement("div");
+  top.className = "card-top";
+  const tag = document.createElement("span");
+  tag.className = "card-tag";
+  tag.textContent = ch.n + "문장";
+  top.appendChild(tag);
+
+  const visual = document.createElement("div");
+  visual.className = "face-visual";
+  visual.innerHTML = faceSVG(ch.face, FACE_BGS[idx % FACE_BGS.length]);
+
+  const hint = document.createElement("div");
+  hint.className = "mission-hint";
+  hint.innerHTML = `<span class="mh-label">힌트</span> ${ch.hintKo}`;
+
+  const ansWrap = document.createElement("div");
+  ansWrap.className = "mission-answer";
+  const cover = document.createElement("button");
+  cover.className = "reveal-btn small";
+  cover.textContent = "정답 문장 확인 👀";
+  const shown = document.createElement("div");
+  shown.className = "mission-shown hidden";
+  const q = document.createElement("div");
+  q.className = "card-question";
+  q.innerHTML = `<span class="q-mark">Q.</span> ${charQuestion(ch)}`;
+  q.addEventListener("click", () => speak(charQuestion(ch)));
+  const en = document.createElement("div"); en.className = "en"; en.appendChild(buildWords(ch.en));
+  const ko = document.createElement("div"); ko.className = "ko"; ko.textContent = ch.ko;
+  const listen = document.createElement("button");
+  listen.className = "btn primary small";
+  listen.textContent = "🔊 질문+대답 듣기";
+  listen.addEventListener("click", () => speakQA(charQuestion(ch), ch.en, null));
+  shown.append(q, en, ko, listen);
+  cover.addEventListener("click", () => { shown.classList.remove("hidden"); cover.remove(); });
+  ansWrap.append(cover, shown);
+
+  const build = document.createElement("button");
+  build.className = "btn ghost small mission-build";
+  build.textContent = "🔨 문장 만들기로 만들기";
+  build.addEventListener("click", () => loadBuildFromChar(ch));
+
+  card.append(top, visual, hint, ansWrap, build);
+  return card;
+}
+
+function renderActivity() {
+  const grid = document.getElementById("activity-grid");
+  if (grid && !grid.dataset.done) {
+    grid.innerHTML = "";
+    ACTIVITY_CHARS.forEach((ch, i) => grid.appendChild(makeMissionCard(ch, i)));
+    grid.dataset.done = "1";
+  }
+}
+
+/* 🎤 짝 대화 리허설: 앱이 묻고(“What does he/she look like?”), 내가 묘사 */
+let rehearsalChar = null;
+function pickRehearsal(doSpeak) {
+  rehearsalChar = ACTIVITY_CHARS[Math.floor(Math.random() * ACTIVITY_CHARS.length)];
+  const face = document.getElementById("reh-face");
+  if (face) face.innerHTML = faceSVG(rehearsalChar.face, "#ffffff");
+  const fb = document.getElementById("reh-feedback");
+  if (fb) {
+    fb.className = "reh-feedback";
+    fb.textContent = doSpeak ? "🔊 질문을 듣고, 이 친구를 영어로 묘사해 보세요!" : "🎤 버튼을 눌러 이 친구를 영어로 묘사해 보세요!";
+  }
+  const a = document.getElementById("reh-answer");
+  if (a) a.classList.add("hidden");
+  if (doSpeak) speak(charQuestion(rehearsalChar));
+}
+
+/* 활동 탭 버튼 묶음 배선 (한 번만) */
+document.querySelectorAll(".q-card-line").forEach(btn => {
+  btn.addEventListener("click", () => speak(btn.dataset.say));
+});
+const rehMic = document.getElementById("reh-mic");
+if (rehMic) {
+  document.getElementById("reh-new").addEventListener("click", () => pickRehearsal(true));
+  document.getElementById("reh-question").addEventListener("click", () => { if (rehearsalChar) speak(charQuestion(rehearsalChar)); });
+  document.getElementById("reh-show").addEventListener("click", () => {
+    if (!rehearsalChar) return;
+    const a = document.getElementById("reh-answer");
+    a.classList.remove("hidden");
+    a.innerHTML = "";
+    const en = document.createElement("div"); en.className = "en"; en.appendChild(buildWords(rehearsalChar.en));
+    const ko = document.createElement("div"); ko.className = "ko"; ko.textContent = rehearsalChar.ko;
+    a.append(en, ko);
+  });
+  if (!srSupported) { rehMic.disabled = true; rehMic.title = "이 브라우저는 음성 인식을 지원하지 않아요 (Chrome 권장)"; }
+  rehMic.addEventListener("click", () => {
+    if (!rehearsalChar || recBusy || !srSupported) return;
+    rehMic.classList.add("recording");
+    const fb = document.getElementById("reh-feedback");
+    fb.className = "reh-feedback";
+    fb.textContent = "🔴 녹음 중... 이 친구를 묘사해 보세요!";
+    practiceAttempt(rehearsalChar.en, {
+      onresult: (score, heard) => {
+        if (score >= 60) { fb.className = "reh-feedback good"; fb.innerHTML = `⭐ 훌륭해요! (${score}%) 친구에게 이렇게 답하면 돼요!<br><span class="heard">내가 한 말: ${heard}</span>`; }
+        else if (score >= 35) { fb.className = "reh-feedback good"; fb.innerHTML = `👍 좋아요! 한 번 더! (${score}%)<br><span class="heard">내가 한 말: ${heard}</span>`; }
+        else { fb.className = "reh-feedback bad"; fb.innerHTML = `🔁 다시! <b>📖 정답 문장</b>을 보고 연습해요. (${score}%)<br><span class="heard">내가 한 말: ${heard || "(못 들었어요)"}</span>`; }
+      },
+      onerror: (err) => { fb.className = "reh-feedback bad"; fb.textContent = err === "not-allowed" ? "마이크 권한을 허용해 주세요." : "다시 시도해 주세요."; },
+      onend: () => { rehMic.classList.remove("recording"); },
+    });
+  });
+}
+
 /* ---------- 헤더 미니 얼굴 퍼레이드 (장식) ---------- */
 (function renderFaceParade() {
   const wrap = document.getElementById("face-parade");
@@ -1097,6 +1238,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     synth.cancel();
     hidePopup();
     if (btn.dataset.tab === "practice") renderPractice();
+    if (btn.dataset.tab === "activity") { renderActivity(); if (!rehearsalChar) pickRehearsal(false); }
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 });

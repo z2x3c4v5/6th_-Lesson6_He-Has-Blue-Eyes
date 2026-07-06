@@ -25,6 +25,7 @@
     <button class="tab-btn" data-tab="desc"><span class="step-no">2</span> 👀 문장</button>
     <button class="tab-btn" data-tab="build"><span class="step-no">3</span> 🧩 만들기</button>
     <button class="tab-btn" data-tab="practice"><span class="step-no">4</span> 🎤 말하기 <span id="practice-count" class="tab-count">0</span></button>
+    <button class="tab-btn" data-tab="activity"><span class="step-no">5</span> 🗂️ 학습지</button>
   </nav>
 
   <div class="toolbar">
@@ -61,7 +62,7 @@
         <div id="body-grid" class="card-grid five"></div>
       </div>
       <div class="section-block">
-        <h2>👗 옷·소품 (Clothes) <span class="count">10개</span></h2>
+        <h2>👗 옷·소품 (Clothes) <span class="count">11개</span></h2>
         <p class="hint"><b>be wearing</b>과 함께 써요. (예: She's wearing a yellow <b>dress</b>.)</p>
         <div id="wear-grid" class="card-grid five"></div>
       </div>
@@ -177,6 +178,49 @@
           아직 담은 문장이 없어요! <b>STEP 2 문장</b>이나 <b>STEP 3 만들기</b>에서 <b>⭐</b>로 연습할 문장을 담아보세요.
         </p>
         <div id="practice-list" class="card-grid practice-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== STEP 5 · 학습지(정보 차) 활동 ===== -->
+    <section id="tab-activity" class="tab-panel">
+      <div class="step-head">
+        <span class="step-badge">STEP 5</span>
+        <div>
+          <h2 class="step-title">🗂️ 학습지 활동 (묻고 답하기)</h2>
+          <p class="step-desc">활동지 속 <b>6명</b>이에요! ① <b>🔨 문장 만들기</b>로 내 담당 인물의 문장을 완성하고, ② <b>🎤 짝 대화 리허설</b>로 연습한 뒤, 친구를 만나 <b>묻고 답하며</b> 빈칸을 채워요.</p>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="q-card">
+          <span class="q-card-label">💬 묻는 질문</span>
+          <div class="q-card-body">
+            <button class="q-card-line" data-say="What does he look like?">❓ What does he look like? <span class="q-ko">(그는 어떻게 생겼나요?)</span></button>
+            <button class="q-card-line" data-say="What does she look like?">❓ What does she look like? <span class="q-ko">(그녀는 어떻게 생겼나요?)</span></button>
+          </div>
+        </div>
+
+        <h2 style="margin-top:24px">👥 활동지 인물 6명 <span class="count">묻고 답하기</span></h2>
+        <p class="hint">각 인물의 <b>정답 문장 확인 👀</b>으로 목표를 보고, <b>🔨 문장 만들기</b>로 직접 만들어 연습해요. 내 담당 2명을 먼저 완성해 학습지에 적어보세요!</p>
+        <div id="activity-grid" class="card-grid five"></div>
+
+        <div class="rehearsal">
+          <h2>🎤 짝 대화 리허설</h2>
+          <p class="hint">앱이 친구가 되어 <b>"What does he/she look like?"</b>라고 물어요. 얼굴을 보고 <b>영어로 묘사</b>해 보세요! 실제로 친구와 하기 전 연습이에요. (Chrome 권장)</p>
+          <div class="reh-box">
+            <div id="reh-face" class="reh-face"></div>
+            <div class="reh-right">
+              <div id="reh-feedback" class="reh-feedback">🎤 버튼을 눌러 이 친구를 영어로 묘사해 보세요!</div>
+              <div class="reh-controls">
+                <button id="reh-mic" class="mic-btn" aria-label="묘사하기"><span class="mic-ico">🎙️</span></button>
+                <button id="reh-question" class="btn">🔊 질문 다시</button>
+                <button id="reh-show" class="btn ghost">📖 정답 문장</button>
+                <button id="reh-new" class="btn primary">🎲 다른 친구</button>
+              </div>
+              <div id="reh-answer" class="reh-answer hidden"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
