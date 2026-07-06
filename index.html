@@ -138,29 +138,21 @@
       </div>
 
       <div class="section-block">
-        <div class="builder">
-          <div class="build-steps">
-            <div class="build-step">
-              <h3 class="build-label">1️⃣ 누구를 묘사할까요?</h3>
-              <div id="build-subject" class="chip-row"></div>
-              <h3 class="build-label" style="margin-top:14px">2️⃣ 무엇을 말할까요?</h3>
-              <div id="build-mode" class="chip-row"></div>
-              <div id="build-target"></div>
-            </div>
-
-            <div class="build-step">
-              <h3 class="build-label">꾸며 주는 말 고르기 <span class="build-sub">(한 번 더 누르면 취소돼요)</span></h3>
-              <div id="build-adjs"></div>
-            </div>
+        <div class="builder madlib">
+          <div class="ml-subject-row">
+            <span class="ml-subject-label">🙋 누구를 묘사할까요?</span>
+            <div id="ml-subject" class="chip-row"></div>
           </div>
+          <p class="ml-guide">아래 문장의 <b class="ml-guide-slot">[ 빈칸 ]</b>을 눌러 단어를 골라 채워 보세요. 부위를 고르면 <b>어울리는 단어만</b> 떠서 틀릴 걱정이 없어요! <b>＋옷차림 문장</b>으로 두 문장도 만들 수 있어요.</p>
+          <div id="ml-lines" class="ml-lines"></div>
 
           <div class="build-actions">
-            <button id="build-random" class="btn primary">🎲 무작위 조합</button>
-            <button id="build-clear" class="btn ghost">🧹 다시 고르기</button>
+            <button id="build-random" class="btn primary">🎲 무작위</button>
+            <button id="build-clear" class="btn ghost">🧹 지우기</button>
           </div>
 
           <div id="build-result" class="build-result empty">
-            누구를 · 어디를 묘사할지 골라보세요! 👆
+            빈칸 [ ]을 눌러 단어를 골라 문장을 완성해 보세요! 👆
           </div>
         </div>
       </div>

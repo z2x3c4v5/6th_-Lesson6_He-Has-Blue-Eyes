@@ -190,6 +190,83 @@ body {
   .pat-txt { font-size: 0.98rem; }
 }
 
+/* ===== 🧩 빈칸 채우기(Mad-Lib) 문장 만들기 ===== */
+.builder.madlib { max-width: 720px; margin: 0 auto; }
+.ml-subject-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.ml-subject-label { font-weight: 800; color: var(--primary-dark); font-size: 1.02rem; }
+.ml-guide { color: var(--muted); font-size: 0.9rem; line-height: 1.55; margin: 0 0 16px; }
+.ml-guide-slot { background: #fff7d6; border: 1.5px dashed var(--wish); color: #b45309; padding: 1px 7px; border-radius: 7px; }
+
+.ml-lines { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.ml-line {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-radius: 18px; padding: 16px 18px;
+  font-size: 1.35rem; font-weight: 800; color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.ml-key { flex-shrink: 0; color: #fff; font-size: 0.82rem; padding: 5px 11px; border-radius: 999px; }
+.ml-key.has { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+.ml-key.wear { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+.ml-w { color: var(--primary-dark); }
+
+.ml-slot {
+  border: 2px dashed var(--wish); background: #fff7d6; color: #b45309;
+  font-family: var(--font); font-weight: 800; font-size: 1rem;
+  padding: 6px 14px; border-radius: 12px; cursor: pointer;
+  transition: transform 0.1s, background 0.15s, filter 0.15s;
+}
+.ml-slot:hover { background: #ffedaf; }
+.ml-slot:active { transform: scale(0.95); }
+.ml-slot.filled { border-style: solid; border-color: var(--primary); background: #eef0ff; color: var(--primary-dark); }
+.ml-slot.slot-part.filled {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff; border-color: transparent;
+}
+.ml-slot .ml-x { font-size: 0.72rem; opacity: 0.85; margin-left: 3px; }
+
+.ml-add {
+  align-self: flex-start; cursor: pointer;
+  border: 2px dashed rgba(124, 58, 237, 0.5);
+  background: rgba(167, 139, 250, 0.14); color: #6d28d9;
+  font-weight: 800; font-size: 0.98rem; font-family: var(--font);
+  padding: 12px 20px; border-radius: 14px; transition: background 0.15s, transform 0.1s;
+}
+.ml-add:hover { background: rgba(167, 139, 250, 0.26); }
+.ml-add:active { transform: scale(0.97); }
+.ml-remove {
+  align-self: flex-start; border: none; background: none; cursor: pointer;
+  color: var(--neg); font-weight: 800; font-size: 0.85rem; font-family: var(--font);
+  padding: 2px 6px;
+}
+
+/* 빈칸 팝업 */
+.ml-pop {
+  position: absolute; z-index: 1200; max-width: 320px;
+  background: #fff; border: 2px solid var(--primary); border-radius: 16px;
+  padding: 12px; box-shadow: 0 14px 34px rgba(15, 58, 77, 0.22);
+  animation: pop 0.14s ease;
+}
+.ml-pop.hidden { display: none; }
+.ml-pop-title { font-weight: 800; color: var(--primary-dark); font-size: 0.9rem; margin-bottom: 9px; text-align: center; }
+.ml-pop-grid { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+.ml-opt {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  border: 2px solid rgba(99, 102, 241, 0.25); background: #fff; color: var(--primary-dark);
+  font-family: var(--font); font-weight: 700; font-size: 0.9rem;
+  padding: 7px 13px; border-radius: 999px; transition: border-color 0.15s, background 0.15s;
+}
+.ml-opt:hover { border-color: var(--primary); }
+.ml-opt.on { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border-color: transparent; }
+.ml-sw { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid rgba(0, 0, 0, 0.15); }
+.ml-clear {
+  display: block; margin: 11px auto 0; cursor: pointer; border: none;
+  background: rgba(244, 63, 94, 0.12); color: var(--neg);
+  font-family: var(--font); font-weight: 800; font-size: 0.82rem;
+  padding: 7px 14px; border-radius: 10px;
+}
+
 /* ===== 🙈 스스로 확인 모드 ===== */
 .study-row {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;

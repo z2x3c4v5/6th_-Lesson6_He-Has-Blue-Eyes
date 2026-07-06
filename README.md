@@ -30,12 +30,14 @@
   - 🙈 **스스로 확인 모드** — 문장을 가리고 그림·질문만 보고 말한 뒤 **정답 확인 👀** (능동 회상)
   - PPT의 표현 모두 포함: blue eyes · long yellow hair · purple hair · braid ·
     mask · cowboy hat and boots · yellow dress · red and gold metal helmet · glasses
-- **STEP 3 · 🧩 문장 만들기** — `누구(He/She)` + `has/wearing` + `꾸미는 말`을 골라 조합
-  - **🙌 has**(신체) · **👕 wearing**(입은 것) 중 하나, 또는 **🙌+👕 둘 다**를 골라
-    **두 문장**까지 만들 수 있어요 (예: *She has long dark hair. She's wearing a red dress.*)
-  - 어색한 조합(curly nose, big hair 등)은 **맞는지 검사**해 이유를 알려주고,
-    올바른 문장은 **문장 + 한글 번역 + 질문·대답 듣기 + 똑같이 생긴 캐릭터 그림** 제공
-  - 🎲 무작위 조합 버튼, ⭐로 (두 문장도) 연습 목록에 담기
+- **STEP 3 · 🧩 문장 만들기** — **빈칸 채우기(Mad-Lib)** 방식
+  - 문장 틀 `He/She has [크기] [색깔] [부위].` 의 **빈칸을 눌러** 관련 단어만 골라 채워요
+  - 부위를 고르면 **어울리는 옵션만** 팝업으로 떠서 (눈→눈 색, 머리→길이·모양·머리 색)
+    **어색한 조합이 아예 안 생겨요** — 틀릴 걱정 없이 완성
+  - **＋옷차림 문장**을 켜면 `is wearing ~` 줄이 추가돼 **두 문장**까지 (예: *She has
+    long dark hair. She's wearing a red dress.*)
+  - 완성되면 **문장 + 한글 번역 + 질문·대답 듣기 + 똑같이 생긴 캐릭터 그림** 제공
+  - 🎲 무작위 버튼, ⭐로 (두 문장도) 연습 목록에 담기
 - **STEP 4 · 🎤 말하기 연습** — ⭐로 담은 문장을 마이크로 말하면 **발음 정확도** 측정 (Chrome 권장)
 - 단어 클릭 시 **뜻 풍선 + 발음**, 말하기 **속도 조절** 슬라이더
 

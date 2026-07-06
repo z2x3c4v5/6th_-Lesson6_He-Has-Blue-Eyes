@@ -483,13 +483,13 @@ document.querySelectorAll(".cat-btn").forEach(btn => {
 /* ===========================================================
  * 🧩 문장 만들기 (He/She + has ~ / is wearing ~)
  * =========================================================== */
-let buildSubject = BUILD_SUBJECTS[0];
-let buildMode = "has";           // "has" | "wearing"
-let buildPart = null;            // has: 신체 부위
-let buildAdjs = {};              // has: { size, length, style, color } (en 값)
-let buildItem = null;            // wearing: 옷·소품
-let buildItemColor = null;       // wearing: 색 { en, ko }
-let lastBuilt = "";              // 마지막으로 들려준 문장 (중복 재생 방지)
+let mlBoy = false;           // 주어: false=She, true=He
+let mlPart = null;           // BUILD_PARTS 항목 (신체)
+let mlAdjs = {};             // { size,length,style,color } (영어값)
+let mlWearOn = false;        // 옷차림 문장 켜짐?
+let mlItem = null;           // BUILD_ITEMS 항목
+let mlItemColor = null;      // { en, ko }
+let lastBuilt = "";          // 마지막으로 들려준 문장 (중복 재생 방지)
 
 function makeChip(text, cls, isOn, onClick) {
   const c = document.createElement("button");
@@ -498,209 +498,259 @@ function makeChip(text, cls, isOn, onClick) {
   c.addEventListener("click", onClick);
   return c;
 }
-
 function adjKo(groupKey, en) {
   const g = BUILD_ADJ_GROUPS.find(x => x.key === groupKey);
   const it = g && g.items.find(x => x.en === en);
   return it ? it.ko : en;
 }
+function colorLabel(en) {
+  const g = BUILD_ADJ_GROUPS.find(x => x.key === "color");
+  const it = g && g.items.find(x => x.en === en);
+  return it ? `${en} (${it.ko})` : en;
+}
+function mlSubj() { return BUILD_SUBJECTS.find(s => s.boy === mlBoy) || BUILD_SUBJECTS[0]; }
+function randOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function renderBuilder() {
-  const subjRow = document.getElementById("build-subject");
-  const modeRow = document.getElementById("build-mode");
-  const targetWrap = document.getElementById("build-target");
-  const adjWrap = document.getElementById("build-adjs");
-  subjRow.innerHTML = ""; modeRow.innerHTML = ""; targetWrap.innerHTML = ""; adjWrap.innerHTML = "";
-
-  // 1️⃣ 누구
-  BUILD_SUBJECTS.forEach(s => {
-    subjRow.appendChild(makeChip(`${s.emoji} ${s.en} (${s.ko})`, "act", buildSubject === s, () => {
-      buildSubject = s; renderBuilder(); updateBuildResult();
-    }));
-  });
-
-  // 2️⃣ 무엇을 말할까
-  [
-    { key: "has", label: "🙌 has ~ (신체)" },
-    { key: "wearing", label: "👕 wearing ~ (입은 것)" },
-    { key: "both", label: "🙌+👕 둘 다 (두 문장)" },
-  ].forEach(m => {
-    modeRow.appendChild(makeChip(m.label, "when", buildMode === m.key, () => {
-      buildMode = m.key; renderBuilder(); updateBuildResult();
-    }));
-  });
-
-  const both = buildMode === "both";
-  if (buildMode === "has" || both) {
-    if (both) targetWrap.append(subHead("🙌 ① 신체 (has ~)"));
-    renderHasControls(targetWrap, adjWrap, both);
-  }
-  if (buildMode === "wearing" || both) {
-    if (both) targetWrap.append(subHead("👕 ② 입은 것 (is wearing ~)"));
-    renderWearControls(targetWrap, adjWrap, both);
-  }
+/* 부위별로 어울리는 형용사 슬롯만 정의 (→ 어색한 조합 자체가 안 생김) */
+function partSlots(part) {
+  if (!part) return [];
+  if (part.key === "eyes") return [
+    { key: "size",  label: "크기", group: "size" },
+    { key: "color", label: "색깔", group: "color", pool: EYE_COLOR_OK },
+  ];
+  if (part.key === "hair") return [
+    { key: "length", label: "길이", group: "length" },
+    { key: "style",  label: "모양", group: "style" },
+    { key: "color",  label: "색깔", group: "color", pool: HAIR_COLOR_OK },
+  ];
+  return [{ key: "size", label: "크기", group: "size" }]; // nose / ears
 }
 
-function subHead(text) {
-  const h = document.createElement("div");
-  h.className = "build-sub-head";
-  h.textContent = text;
-  return h;
+/* ---------- 빈칸 팝업(슬롯 고르기) ---------- */
+const mlPop = document.createElement("div");
+mlPop.className = "ml-pop hidden";
+document.body.appendChild(mlPop);
+function closeMlPop() { mlPop.classList.add("hidden"); mlPop.innerHTML = ""; }
+document.addEventListener("click", e => {
+  if (!mlPop.contains(e.target) && !e.target.closest(".ml-slot")) closeMlPop();
+});
+function openSlot(anchor, title, options, current, onPick, onClear) {
+  mlPop.innerHTML = "";
+  const t = document.createElement("div");
+  t.className = "ml-pop-title";
+  t.textContent = title;
+  mlPop.appendChild(t);
+  const grid = document.createElement("div");
+  grid.className = "ml-pop-grid";
+  options.forEach(o => {
+    const b = document.createElement("button");
+    b.className = "ml-opt" + (current === o.value ? " on" : "");
+    if (o.swatch) {
+      const s = document.createElement("span");
+      s.className = "ml-sw"; s.style.background = o.swatch;
+      b.appendChild(s);
+    }
+    b.appendChild(document.createTextNode(o.label));
+    b.addEventListener("click", ev => { ev.stopPropagation(); onPick(o.value); closeMlPop(); });
+    grid.appendChild(b);
+  });
+  mlPop.appendChild(grid);
+  if (onClear && current != null) {
+    const c = document.createElement("button");
+    c.className = "ml-clear"; c.textContent = "이 빈칸 지우기 ✕";
+    c.addEventListener("click", ev => { ev.stopPropagation(); onClear(); closeMlPop(); });
+    mlPop.appendChild(c);
+  }
+  mlPop.classList.remove("hidden");
+  const r = anchor.getBoundingClientRect();
+  const pw = mlPop.offsetWidth;
+  let left = r.left + r.width / 2 - pw / 2 + window.scrollX;
+  left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
+  mlPop.style.left = left + "px";
+  mlPop.style.top = (r.bottom + 8 + window.scrollY) + "px";
 }
 
-/* 신체(has) 고르기 컨트롤: 부위는 targetWrap, 꾸밈말은 adjWrap 에 추가 */
-function renderHasControls(targetWrap, adjWrap, both) {
-  const title = document.createElement("div");
-  title.className = "chip-group-title";
-  title.textContent = both ? "어디를 묘사할까요?" : "3️⃣ 어디를 묘사할까요? (신체)";
-  const row = document.createElement("div");
-  row.className = "chip-row";
-  BUILD_PARTS.forEach(pt => {
-    row.appendChild(makeChip(`${pt.emoji} ${pt.en}`, "act", buildPart === pt, () => {
-      buildPart = pt; renderBuilder(); updateBuildResult();
+/* 빈칸(슬롯) 버튼 */
+function slotBtn(filled, placeholder, cls, onClick) {
+  const s = document.createElement("button");
+  s.className = "ml-slot " + cls + (filled ? " filled" : "");
+  s.textContent = filled || placeholder;
+  s.addEventListener("click", e => { e.stopPropagation(); onClick(s); });
+  return s;
+}
+function wordSpan(text) {
+  const w = document.createElement("span");
+  w.className = "ml-w"; w.textContent = text;
+  return w;
+}
+
+function renderMadlib() {
+  // 누구
+  const subjRow = document.getElementById("ml-subject");
+  subjRow.innerHTML = "";
+  BUILD_SUBJECTS.forEach(sub => {
+    subjRow.appendChild(makeChip(`${sub.emoji} ${sub.en} (${sub.ko})`, "act", mlBoy === sub.boy, () => {
+      mlBoy = sub.boy; renderMadlib(); updateBuildResult();
     }));
   });
-  targetWrap.append(title, row);
 
-  if (both) adjWrap.append(subHead("🙌 신체 꾸미기"));
-  BUILD_ADJ_GROUPS.forEach(g => {
-    const t = document.createElement("div");
-    t.className = "chip-group-title";
-    t.textContent = g.label;
-    const r = document.createElement("div");
-    r.className = "chip-row";
-    g.items.forEach(a => {
-      const on = buildAdjs[g.key] === a.en;
-      r.appendChild(makeChip(`${a.en} (${a.ko})`, "where", on, () => {
-        if (on) delete buildAdjs[g.key];
-        else buildAdjs[g.key] = a.en;
-        renderBuilder(); updateBuildResult();
+  const lines = document.getElementById("ml-lines");
+  lines.innerHTML = "";
+  const subjEn = mlBoy ? "He" : "She";
+
+  /* ===== 🙌 has 줄 ===== */
+  const l1 = document.createElement("div");
+  l1.className = "ml-line";
+  const k1 = document.createElement("span"); k1.className = "ml-key has"; k1.textContent = "🙌 has";
+  l1.append(k1, wordSpan(`${subjEn} has`));
+
+  if (!mlPart) {
+    l1.appendChild(slotBtn(null, "＋ 눈·코·머리·귀", "slot-part", (a) => {
+      openSlot(a, "어디를 묘사할까요?",
+        BUILD_PARTS.map(p => ({ value: p.key, label: `${p.emoji} ${p.en}` })), null,
+        (v) => { mlPart = BUILD_PARTS.find(p => p.key === v); mlAdjs = {}; renderMadlib(); updateBuildResult(); });
+    }));
+  } else {
+    partSlots(mlPart).forEach(sl => {
+      const cur = mlAdjs[sl.key] || null;
+      l1.appendChild(slotBtn(cur, `[${sl.label}]`, "slot-adj", (a) => {
+        let opts;
+        if (sl.group === "color") opts = sl.pool.map(c => ({ value: c, label: colorLabel(c), swatch: COLOR_HEX[c] }));
+        else {
+          const g = BUILD_ADJ_GROUPS.find(x => x.key === sl.group);
+          opts = g.items.map(x => ({ value: x.en, label: `${x.en} (${x.ko})` }));
+        }
+        openSlot(a, `${sl.label} 고르기`, opts, cur,
+          (v) => { mlAdjs[sl.key] = v; renderMadlib(); updateBuildResult(); },
+          () => { delete mlAdjs[sl.key]; renderMadlib(); updateBuildResult(); });
       }));
     });
-    adjWrap.append(t, r);
-  });
-}
+    const partChip = document.createElement("button");
+    partChip.className = "ml-slot slot-part filled";
+    partChip.innerHTML = `${mlPart.emoji} ${mlPart.en} <span class="ml-x">✕</span>`;
+    partChip.addEventListener("click", e => {
+      e.stopPropagation();
+      openSlot(partChip, "어디를 묘사할까요?",
+        BUILD_PARTS.map(p => ({ value: p.key, label: `${p.emoji} ${p.en}` })), mlPart.key,
+        (v) => { mlPart = BUILD_PARTS.find(p => p.key === v); mlAdjs = {}; renderMadlib(); updateBuildResult(); });
+    });
+    l1.appendChild(partChip);
+  }
+  l1.appendChild(wordSpan("."));
+  lines.appendChild(l1);
 
-/* 옷(wearing) 고르기 컨트롤: 소품은 targetWrap, 색깔은 adjWrap 에 추가 */
-function renderWearControls(targetWrap, adjWrap, both) {
-  const title = document.createElement("div");
-  title.className = "chip-group-title";
-  title.textContent = both ? "무엇을 입고/쓰고 있나요?" : "3️⃣ 무엇을 입고/쓰고 있나요?";
-  const row = document.createElement("div");
-  row.className = "chip-row";
-  BUILD_ITEMS.forEach(it => {
-    row.appendChild(makeChip(`${it.emoji} ${it.noun}`, "act", buildItem === it, () => {
-      buildItem = it; renderBuilder(); updateBuildResult();
-    }));
-  });
-  targetWrap.append(title, row);
+  /* ===== 👕 wearing 줄 ===== */
+  if (!mlWearOn) {
+    const add = document.createElement("button");
+    add.className = "ml-add";
+    add.textContent = "＋ 옷차림 문장도 만들기 (is wearing ~)";
+    add.addEventListener("click", () => { mlWearOn = true; renderMadlib(); updateBuildResult(); });
+    lines.appendChild(add);
+  } else {
+    const l2 = document.createElement("div");
+    l2.className = "ml-line";
+    const k2 = document.createElement("span"); k2.className = "ml-key wear"; k2.textContent = "👕 wearing";
+    l2.append(k2, wordSpan(`${subjEn}'s wearing`));
 
-  if (both) adjWrap.append(subHead("👕 옷 색깔"));
-  const t = document.createElement("div");
-  t.className = "chip-group-title";
-  t.textContent = "🎨 색깔 (골라도 되고 안 골라도 돼요)";
-  const r = document.createElement("div");
-  r.className = "chip-row";
-  ITEM_COLORS.forEach(c => {
-    const on = buildItemColor && buildItemColor.en === c.en;
-    r.appendChild(makeChip(`${c.en} (${c.ko})`, "where", on, () => {
-      buildItemColor = on ? null : c;
-      renderBuilder(); updateBuildResult();
-    }));
-  });
-  adjWrap.append(t, r);
-}
+    if (!mlItem) {
+      l2.appendChild(slotBtn(null, "＋ 옷·소품", "slot-part", (a) => {
+        openSlot(a, "무엇을 입고/쓰고 있나요?",
+          BUILD_ITEMS.map(it => ({ value: it.key, label: `${it.emoji} ${it.noun}` })), null,
+          (v) => { mlItem = BUILD_ITEMS.find(it => it.key === v); if (mlItem && !mlItem.color) mlItemColor = null; renderMadlib(); updateBuildResult(); });
+      }));
+    } else {
+      if (!mlItem.plural) l2.appendChild(wordSpan("a"));
+      if (mlItem.color) {
+        const cur = mlItemColor ? mlItemColor.en : null;
+        l2.appendChild(slotBtn(cur, "[색깔]", "slot-adj", (a) => {
+          openSlot(a, "색깔 고르기",
+            ITEM_COLORS.map(c => ({ value: c.en, label: `${c.en} (${c.ko})`, swatch: COLOR_HEX[c.en] })), cur,
+            (v) => { mlItemColor = ITEM_COLORS.find(c => c.en === v); renderMadlib(); updateBuildResult(); },
+            () => { mlItemColor = null; renderMadlib(); updateBuildResult(); });
+        }));
+      }
+      const itemChip = document.createElement("button");
+      itemChip.className = "ml-slot slot-part filled";
+      itemChip.innerHTML = `${mlItem.emoji} ${mlItem.noun} <span class="ml-x">✕</span>`;
+      itemChip.addEventListener("click", e => {
+        e.stopPropagation();
+        openSlot(itemChip, "무엇을 입고/쓰고 있나요?",
+          BUILD_ITEMS.map(it => ({ value: it.key, label: `${it.emoji} ${it.noun}` })), mlItem.key,
+          (v) => { mlItem = BUILD_ITEMS.find(it => it.key === v); if (mlItem && !mlItem.color) mlItemColor = null; renderMadlib(); updateBuildResult(); });
+      });
+      l2.appendChild(itemChip);
+    }
+    l2.appendChild(wordSpan("."));
+    lines.appendChild(l2);
 
-/* has 조합 검사: 어울리지 않는 꾸밈말이면 이유를 알려줘요 */
-function checkHasCombo(part, adjs) {
-  if (part.key !== "hair" && (adjs.length)) {
-    return `<b>long / short</b>(길이)는 <b>hair</b>(머리카락)에 어울려요.<br>눈·코·귀에는 <b>big / small</b>을 써 보세요!`;
+    const rm = document.createElement("button");
+    rm.className = "ml-remove";
+    rm.textContent = "✕ 옷차림 문장 빼기";
+    rm.addEventListener("click", () => { mlWearOn = false; mlItem = null; mlItemColor = null; renderMadlib(); updateBuildResult(); });
+    lines.appendChild(rm);
   }
-  if (part.key !== "hair" && adjs.style) {
-    return `<b>straight / curly</b>(곧은·곱슬)는 <b>hair</b>(머리카락)를 꾸밀 때만 써요!`;
-  }
-  if (part.key === "hair" && adjs.size) {
-    return `머리카락의 길이는 big/small 대신 <b>long / short</b>로 말해요!`;
-  }
-  if (part.allow.color == null && adjs.color) {
-    return `코와 귀는 색깔 대신 <b>크기(big / small)</b>로 묘사해요!`;
-  }
-  if (part.key === "eyes" && adjs.color && !EYE_COLOR_OK.includes(adjs.color)) {
-    return `<b>${adjs.color}</b>는 머리카락 색으로 어울려요.<br>눈 색깔은 <b>blue · green · brown · black · gray</b>에서 골라 보세요!`;
-  }
-  if (part.key === "hair" && adjs.color && !HAIR_COLOR_OK.includes(adjs.color)) {
-    return `<b>${adjs.color}</b>는 눈 색깔로 어울려요.<br>머리 색은 <b>black · brown · blonde · red…</b>에서 골라 보세요!`;
-  }
-  return null;
 }
 
 /* 고른 내용을 캐릭터 그림으로 */
 function buildPreviewFace() {
   const f = {
-    boy: buildSubject.boy,
-    hairLen: "short", hairStyle: "straight",
-    hairColor: buildSubject.boy ? "brown" : "black",
-    eyeColor: "brown",
+    boy: mlBoy, hairLen: "short", hairStyle: "straight",
+    hairColor: mlBoy ? "brown" : "black", eyeColor: "brown",
   };
-  if (!buildSubject.boy) f.hairLen = "long";
-  const doHas = (buildMode === "has" || buildMode === "both") && buildPart;
-  const doWear = (buildMode === "wearing" || buildMode === "both") && buildItem;
-  if (doHas) {
-    if (buildPart.key === "eyes") {
-      if (buildAdjs.size) f.eyeSize = buildAdjs.size;
-      if (buildAdjs.color) f.eyeColor = buildAdjs.color;
-    } else if (buildPart.key === "hair") {
-      if (buildAdjs.length) f.hairLen = buildAdjs.length;
-      if (buildAdjs.style) f.hairStyle = buildAdjs.style;
-      if (buildAdjs.color) f.hairColor = buildAdjs.color;
-    } else if (buildPart.key === "nose") {
-      if (buildAdjs.size) f.noseSize = buildAdjs.size;
-    } else if (buildPart.key === "ears") {
-      if (buildAdjs.size) f.earSize = buildAdjs.size;
+  if (!mlBoy) f.hairLen = "long";
+  if (mlPart) {
+    if (mlPart.key === "eyes") {
+      if (mlAdjs.size) f.eyeSize = mlAdjs.size;
+      if (mlAdjs.color) f.eyeColor = mlAdjs.color;
+    } else if (mlPart.key === "hair") {
+      if (mlAdjs.length) f.hairLen = mlAdjs.length;
+      if (mlAdjs.style) f.hairStyle = mlAdjs.style;
+      if (mlAdjs.color) f.hairColor = mlAdjs.color;
+    } else if (mlPart.key === "nose") {
+      if (mlAdjs.size) f.noseSize = mlAdjs.size;
+    } else if (mlPart.key === "ears") {
+      if (mlAdjs.size) f.earSize = mlAdjs.size;
     }
   }
-  if (doWear) {
-    Object.assign(f, buildItem.apply);
-    const col = buildItemColor ? buildItemColor.en : null;
-    if (buildItem.apply.dress) f.dress = col || "pink";
-    if (buildItem.apply.hat) f.hatColor = col || undefined;
-    if (buildItem.apply.mask && col) f.maskColor = col;
-    if (buildItem.apply.boots && col) f.bootColor = col;
+  if (mlWearOn && mlItem) {
+    Object.assign(f, mlItem.apply);
+    const col = mlItemColor ? mlItemColor.en : null;
+    if (mlItem.apply.dress) f.dress = col || "pink";
+    if (mlItem.apply.hat) f.hatColor = col || undefined;
+    if (mlItem.apply.mask && col) f.maskColor = col;
+    if (mlItem.apply.boots && col) f.bootColor = col;
   }
   return f;
 }
 
-/* has 문장 만들기 → { en, ko } | { incomplete } | { error } */
+/* has 문장 → { en, ko } | { incomplete } */
 function hasSentence() {
-  if (!buildPart) return { incomplete: "part" };
-  if (!Object.keys(buildAdjs).length) return { incomplete: "adj" };
-  const why = checkHasCombo(buildPart, buildAdjs);
-  if (why) return { error: why };
-  const adjEn = [buildAdjs.size || buildAdjs.length, buildAdjs.style, buildAdjs.color].filter(Boolean);
+  if (!mlPart) return { incomplete: "part" };
+  if (!Object.keys(mlAdjs).length) return { incomplete: "adj" };
+  const subj = mlSubj();
+  const adjEn = [mlAdjs.size || mlAdjs.length, mlAdjs.style, mlAdjs.color].filter(Boolean);
   const adjKoArr = [];
-  if (buildAdjs.size) adjKoArr.push(adjKo("size", buildAdjs.size));
-  if (buildAdjs.length) adjKoArr.push(adjKo("length", buildAdjs.length));
-  if (buildAdjs.style) adjKoArr.push(adjKo("style", buildAdjs.style));
-  if (buildAdjs.color) adjKoArr.push(adjKo("color", buildAdjs.color));
-  const np = (buildPart.article ? buildPart.article + " " : "") + adjEn.join(" ") + " " + buildPart.en;
+  if (mlAdjs.size) adjKoArr.push(adjKo("size", mlAdjs.size));
+  if (mlAdjs.length) adjKoArr.push(adjKo("length", mlAdjs.length));
+  if (mlAdjs.style) adjKoArr.push(adjKo("style", mlAdjs.style));
+  if (mlAdjs.color) adjKoArr.push(adjKo("color", mlAdjs.color));
+  const np = (mlPart.article ? mlPart.article + " " : "") + adjEn.join(" ") + " " + mlPart.en;
   return {
-    en: `${buildSubject.en} has ${np}.`,
-    ko: `${buildSubject.ko} ${adjKoArr.join(" ")} ${buildPart.koObj} 가지고 있어요.`,
+    en: `${subj.en} has ${np}.`,
+    ko: `${subj.ko} ${adjKoArr.join(" ")} ${mlPart.koObj} 가지고 있어요.`,
   };
 }
 
-/* wearing 문장 만들기 → { en, ko } | { incomplete } | { error } */
+/* wearing 문장 → { en, ko } | { incomplete } */
 function wearSentence() {
-  if (!buildItem) return { incomplete: "item" };
-  if (buildItemColor && !buildItem.color) {
-    return { error: `"<b>${buildItem.noun}</b>" 에는 보통 색깔을 붙이지 않아요.<br>색깔 없이 말하거나, <b>dress · hat · cap</b> 같은 것을 골라 보세요!` };
-  }
-  const colorEn = buildItemColor ? buildItemColor.en + " " : "";
-  const np = (buildItem.plural ? "" : "a ") + colorEn + buildItem.noun;
-  const koColor = buildItemColor ? buildItemColor.ko + " " : "";
+  if (!mlItem) return { incomplete: "item" };
+  const subj = mlSubj();
+  const colorEn = mlItemColor ? mlItemColor.en + " " : "";
+  const np = (mlItem.plural ? "" : "a ") + colorEn + mlItem.noun;
+  const koColor = mlItemColor ? mlItemColor.ko + " " : "";
   return {
-    en: `${buildSubject.en}'s wearing ${np}.`,
-    ko: `${buildSubject.ko} ${koColor}${buildItem.koObj} ${buildItem.verb}고 있어요.`,
+    en: `${subj.en}'s wearing ${np}.`,
+    ko: `${subj.ko} ${koColor}${mlItem.koObj} ${mlItem.verb}고 있어요.`,
   };
 }
 
@@ -709,55 +759,28 @@ function buildEmpty(box, msg) {
   box.textContent = msg;
   lastBuilt = "";
 }
-function buildBad(box, whyHtml) {
-  box.className = "build-result bad";
-  box.innerHTML = "";
-  const badge = document.createElement("div");
-  badge.className = "br-badge";
-  badge.textContent = "🤔 이 조합은 어색해요";
-  const note = document.createElement("div");
-  note.className = "br-note";
-  note.innerHTML = whyHtml;
-  box.append(badge, note);
-  lastBuilt = "";
-}
 
 function updateBuildResult() {
   const box = document.getElementById("build-result");
-
-  /* --- 🙌 has ~ --- */
-  if (buildMode === "has") {
-    const r = hasSentence();
-    if (r.incomplete === "part") return buildEmpty(box, "누구를 · 어디를 묘사할지 골라보세요! 👆");
-    if (r.incomplete === "adj") return buildEmpty(box, `"${buildSubject.en} has ... ${buildPart.en}." — 꾸며 주는 말(크기·색깔 등)을 골라 문장을 완성해요! 👆`);
-    if (r.error) return buildBad(box, r.error);
-    return showGoodResult(box, r.en, r.ko);
-  }
-
-  /* --- 👕 is wearing ~ --- */
-  if (buildMode === "wearing") {
-    const r = wearSentence();
-    if (r.incomplete) return buildEmpty(box, "무엇을 입고/쓰고 있는지 골라보세요! 👆");
-    if (r.error) return buildBad(box, r.error);
-    return showGoodResult(box, r.en, r.ko);
-  }
-
-  /* --- 🙌+👕 둘 다 (두 문장) --- */
   const h = hasSentence();
-  const w = wearSentence();
-  if (h.error) return buildBad(box, h.error);
-  if (w.error) return buildBad(box, w.error);
-  if (h.incomplete || w.incomplete) {
-    return buildEmpty(box, "🙌 신체 문장과 👕 입은 것 문장을 모두 완성하면 두 문장이 이어져요! 👆 (예: She has long hair. She's wearing a red dress.)");
+  const w = mlWearOn ? wearSentence() : { incomplete: "off" };
+  const done = [];
+  if (!h.incomplete) done.push(h);
+  if (mlWearOn && !w.incomplete) done.push(w);
+
+  if (!done.length) {
+    if (mlPart && !Object.keys(mlAdjs).length)
+      return buildEmpty(box, `크기·색깔 빈칸을 눌러 "${mlSubj().en} has ... ${mlPart.en}." 문장을 완성해요! 👆`);
+    return buildEmpty(box, "빈칸 [ ]을 눌러 단어를 골라 문장을 완성해 보세요! 👆");
   }
-  showGoodResult(box, h.en + " " + w.en, h.ko + " " + w.ko);
+  showGoodResult(box, done.map(p => p.en).join(" "), done.map(p => p.ko).join(" "));
 }
 
 function showGoodResult(box, en, ko) {
   box.className = "build-result ok";
   box.innerHTML = "";
-
-  const question = buildSubject.boy ? "What does he look like?" : "What does she look like?";
+  const subj = mlSubj();
+  const question = subj.boy ? "What does he look like?" : "What does she look like?";
 
   const badge = document.createElement("div");
   badge.className = "br-badge";
@@ -788,7 +811,7 @@ function showGoodResult(box, en, ko) {
   listenBtn.textContent = "🔊 질문+대답 듣기";
   listenBtn.addEventListener("click", () => speakQA(question, en, null));
 
-  const item = { en, ko, emoji: buildSubject.emoji, face, type: "combo" };
+  const item = { en, ko, emoji: subj.emoji, face, type: "combo" };
   const starBtn = document.createElement("button");
   starBtn.className = "btn";
   const on = isSelected(en);
@@ -798,50 +821,42 @@ function showGoodResult(box, en, ko) {
   actions.append(listenBtn, starBtn);
   box.append(badge, preview, qEl, enEl, koEl, actions);
 
-  // 새로운 문장이 완성되면 한 번만 "질문 → 대답"으로 들려주기
   if (en !== lastBuilt) { lastBuilt = en; speakQA(question, en, null); }
 }
 
-function randOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function fillRandomHas() {
-  buildPart = randOf(BUILD_PARTS);
-  buildAdjs = {};
-  if (buildPart.allow.size && Math.random() < (buildPart.allow.color ? 0.6 : 1)) {
-    buildAdjs.size = randOf(BUILD_ADJ_GROUPS[0].items).en;
-  }
-  if (buildPart.allow.length) buildAdjs.length = randOf(BUILD_ADJ_GROUPS[1].items).en;
-  if (buildPart.allow.style && Math.random() < 0.6) buildAdjs.style = randOf(BUILD_ADJ_GROUPS[2].items).en;
-  if (buildPart.allow.color) {
-    const pool = buildPart.allow.color === "eye" ? EYE_COLOR_OK : HAIR_COLOR_OK;
-    buildAdjs.color = randOf(pool);
-  }
-  // 꾸밈말이 하나도 없으면 최소 하나는 넣어 문장이 되게
-  if (!Object.keys(buildAdjs).length) {
-    if (buildPart.allow.size) buildAdjs.size = randOf(BUILD_ADJ_GROUPS[0].items).en;
-    else if (buildPart.allow.length) buildAdjs.length = randOf(BUILD_ADJ_GROUPS[1].items).en;
-  }
-}
-function fillRandomWear() {
-  buildItem = randOf(BUILD_ITEMS);
-  buildItemColor = (buildItem.color && Math.random() < 0.8) ? randOf(ITEM_COLORS) : null;
-}
-
 document.getElementById("build-random").addEventListener("click", () => {
-  buildSubject = randOf(BUILD_SUBJECTS);
-  buildMode = randOf(["has", "wearing", "both"]);
-  buildAdjs = {}; buildItem = null; buildItemColor = null; buildPart = null;
-
-  if (buildMode === "has" || buildMode === "both") fillRandomHas();
-  if (buildMode === "wearing" || buildMode === "both") fillRandomWear();
-  renderBuilder();
+  mlBoy = Math.random() < 0.5;
+  mlPart = randOf(BUILD_PARTS);
+  mlAdjs = {};
+  partSlots(mlPart).forEach(sl => {
+    if (sl.group === "color") mlAdjs.color = randOf(sl.pool);
+    else if (sl.group === "size") { if (Math.random() < 0.9) mlAdjs.size = randOf(BUILD_ADJ_GROUPS[0].items).en; }
+    else if (sl.group === "length") mlAdjs.length = randOf(BUILD_ADJ_GROUPS[1].items).en;
+    else if (sl.group === "style") { if (Math.random() < 0.55) mlAdjs.style = randOf(BUILD_ADJ_GROUPS[2].items).en; }
+  });
+  if (!Object.keys(mlAdjs).length) {
+    const sl = partSlots(mlPart)[0];
+    if (sl.group === "size") mlAdjs.size = randOf(BUILD_ADJ_GROUPS[0].items).en;
+    else if (sl.group === "length") mlAdjs.length = randOf(BUILD_ADJ_GROUPS[1].items).en;
+    else if (sl.group === "color") mlAdjs.color = randOf(sl.pool);
+  }
+  if (Math.random() < 0.5) {
+    mlWearOn = true;
+    mlItem = randOf(BUILD_ITEMS);
+    mlItemColor = (mlItem.color && Math.random() < 0.8) ? randOf(ITEM_COLORS) : null;
+  } else {
+    mlWearOn = false; mlItem = null; mlItemColor = null;
+  }
+  closeMlPop();
+  renderMadlib();
   updateBuildResult();
 });
 
 document.getElementById("build-clear").addEventListener("click", () => {
-  buildPart = null; buildAdjs = {}; buildItem = null; buildItemColor = null;
+  mlPart = null; mlAdjs = {}; mlWearOn = false; mlItem = null; mlItemColor = null;
   synth.cancel();
-  renderBuilder();
+  closeMlPop();
+  renderMadlib();
   updateBuildResult();
 });
 
@@ -1068,7 +1083,7 @@ renderGrid("color-grid", COLOR_WORDS, { tones: true, noIndex: true });
 renderGrid("size-grid", SIZE_WORDS, { tones: true, noIndex: true });
 renderGrid("body-grid", BODY_WORDS, { tones: true, noIndex: true });
 renderGrid("wear-grid", WEAR_WORDS, { tones: true, noIndex: true });
-renderBuilder();
+renderMadlib();
 updateBuildResult();
 updatePracticeBadge();
 
