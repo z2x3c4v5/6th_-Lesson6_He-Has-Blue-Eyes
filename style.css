@@ -398,6 +398,15 @@ main { max-width: 980px; margin: 0 auto; padding: 0 16px 50px; }
 }
 .build-label { margin: 0 0 10px; font-size: 1.08rem; color: var(--primary-dark); }
 .build-sub { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+/* 🙌+👕 둘 다 모드의 소구역 제목 */
+.build-sub-head {
+  margin: 16px 0 8px; padding: 7px 12px; border-radius: 11px;
+  font-weight: 800; font-size: 0.95rem; color: var(--primary-dark);
+  background: rgba(99, 102, 241, 0.12);
+  border-left: 4px solid var(--primary);
+}
+#build-target .build-sub-head:first-child,
+#build-adjs .build-sub-head:first-child { margin-top: 0; }
 #build-adjs .chip-group-title:first-child,
 #build-target .chip-group-title:first-child { margin-top: 0; }
 .chip-group-title { margin: 14px 0 7px; font-size: 0.92rem; font-weight: 800; color: var(--primary-dark); }

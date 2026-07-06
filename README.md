@@ -31,9 +31,11 @@
   - PPT의 표현 모두 포함: blue eyes · long yellow hair · purple hair · braid ·
     mask · cowboy hat and boots · yellow dress · red and gold metal helmet · glasses
 - **STEP 3 · 🧩 문장 만들기** — `누구(He/She)` + `has/wearing` + `꾸미는 말`을 골라 조합
+  - **🙌 has**(신체) · **👕 wearing**(입은 것) 중 하나, 또는 **🙌+👕 둘 다**를 골라
+    **두 문장**까지 만들 수 있어요 (예: *She has long dark hair. She's wearing a red dress.*)
   - 어색한 조합(curly nose, big hair 등)은 **맞는지 검사**해 이유를 알려주고,
     올바른 문장은 **문장 + 한글 번역 + 질문·대답 듣기 + 똑같이 생긴 캐릭터 그림** 제공
-  - 🎲 무작위 조합 버튼, ⭐로 연습 목록에 담기
+  - 🎲 무작위 조합 버튼, ⭐로 (두 문장도) 연습 목록에 담기
 - **STEP 4 · 🎤 말하기 연습** — ⭐로 담은 문장을 마이크로 말하면 **발음 정확도** 측정 (Chrome 권장)
 - 단어 클릭 시 **뜻 풍선 + 발음**, 말하기 **속도 조절** 슬라이더
 

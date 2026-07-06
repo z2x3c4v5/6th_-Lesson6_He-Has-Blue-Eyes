@@ -521,74 +521,94 @@ function renderBuilder() {
 
   // 2️⃣ 무엇을 말할까
   [
-    { key: "has", label: "🙌 has ~ (신체 묘사)" },
-    { key: "wearing", label: "👕 is wearing ~ (입은 것)" },
+    { key: "has", label: "🙌 has ~ (신체)" },
+    { key: "wearing", label: "👕 wearing ~ (입은 것)" },
+    { key: "both", label: "🙌+👕 둘 다 (두 문장)" },
   ].forEach(m => {
     modeRow.appendChild(makeChip(m.label, "when", buildMode === m.key, () => {
       buildMode = m.key; renderBuilder(); updateBuildResult();
     }));
   });
 
-  if (buildMode === "has") {
-    // 3️⃣ 신체 부위
-    const title = document.createElement("div");
-    title.className = "chip-group-title";
-    title.textContent = "3️⃣ 어디를 묘사할까요? (신체)";
-    const row = document.createElement("div");
-    row.className = "chip-row";
-    BUILD_PARTS.forEach(pt => {
-      row.appendChild(makeChip(`${pt.emoji} ${pt.en}`, "act", buildPart === pt, () => {
-        buildPart = pt; renderBuilder(); updateBuildResult();
-      }));
-    });
-    targetWrap.append(title, row);
+  const both = buildMode === "both";
+  if (buildMode === "has" || both) {
+    if (both) targetWrap.append(subHead("🙌 ① 신체 (has ~)"));
+    renderHasControls(targetWrap, adjWrap, both);
+  }
+  if (buildMode === "wearing" || both) {
+    if (both) targetWrap.append(subHead("👕 ② 입은 것 (is wearing ~)"));
+    renderWearControls(targetWrap, adjWrap, both);
+  }
+}
 
-    // 4️⃣ 꾸며 주는 말 (크기·길이·모양·색깔 — 골라 보며 어울리는지 배워요)
-    BUILD_ADJ_GROUPS.forEach(g => {
-      const t = document.createElement("div");
-      t.className = "chip-group-title";
-      t.textContent = g.label;
-      const r = document.createElement("div");
-      r.className = "chip-row";
-      g.items.forEach(a => {
-        const on = buildAdjs[g.key] === a.en;
-        r.appendChild(makeChip(`${a.en} (${a.ko})`, "where", on, () => {
-          if (on) delete buildAdjs[g.key];
-          else buildAdjs[g.key] = a.en;
-          renderBuilder(); updateBuildResult();
-        }));
-      });
-      adjWrap.append(t, r);
-    });
-  } else {
-    // 3️⃣ 옷·소품
-    const title = document.createElement("div");
-    title.className = "chip-group-title";
-    title.textContent = "3️⃣ 무엇을 입고/쓰고 있나요?";
-    const row = document.createElement("div");
-    row.className = "chip-row";
-    BUILD_ITEMS.forEach(it => {
-      row.appendChild(makeChip(`${it.emoji} ${it.noun}`, "act", buildItem === it, () => {
-        buildItem = it; renderBuilder(); updateBuildResult();
-      }));
-    });
-    targetWrap.append(title, row);
+function subHead(text) {
+  const h = document.createElement("div");
+  h.className = "build-sub-head";
+  h.textContent = text;
+  return h;
+}
 
-    // 4️⃣ 색깔 (선택)
+/* 신체(has) 고르기 컨트롤: 부위는 targetWrap, 꾸밈말은 adjWrap 에 추가 */
+function renderHasControls(targetWrap, adjWrap, both) {
+  const title = document.createElement("div");
+  title.className = "chip-group-title";
+  title.textContent = both ? "어디를 묘사할까요?" : "3️⃣ 어디를 묘사할까요? (신체)";
+  const row = document.createElement("div");
+  row.className = "chip-row";
+  BUILD_PARTS.forEach(pt => {
+    row.appendChild(makeChip(`${pt.emoji} ${pt.en}`, "act", buildPart === pt, () => {
+      buildPart = pt; renderBuilder(); updateBuildResult();
+    }));
+  });
+  targetWrap.append(title, row);
+
+  if (both) adjWrap.append(subHead("🙌 신체 꾸미기"));
+  BUILD_ADJ_GROUPS.forEach(g => {
     const t = document.createElement("div");
     t.className = "chip-group-title";
-    t.textContent = "🎨 색깔 (골라도 되고 안 골라도 돼요)";
+    t.textContent = g.label;
     const r = document.createElement("div");
     r.className = "chip-row";
-    ITEM_COLORS.forEach(c => {
-      const on = buildItemColor && buildItemColor.en === c.en;
-      r.appendChild(makeChip(`${c.en} (${c.ko})`, "where", on, () => {
-        buildItemColor = on ? null : c;
+    g.items.forEach(a => {
+      const on = buildAdjs[g.key] === a.en;
+      r.appendChild(makeChip(`${a.en} (${a.ko})`, "where", on, () => {
+        if (on) delete buildAdjs[g.key];
+        else buildAdjs[g.key] = a.en;
         renderBuilder(); updateBuildResult();
       }));
     });
     adjWrap.append(t, r);
-  }
+  });
+}
+
+/* 옷(wearing) 고르기 컨트롤: 소품은 targetWrap, 색깔은 adjWrap 에 추가 */
+function renderWearControls(targetWrap, adjWrap, both) {
+  const title = document.createElement("div");
+  title.className = "chip-group-title";
+  title.textContent = both ? "무엇을 입고/쓰고 있나요?" : "3️⃣ 무엇을 입고/쓰고 있나요?";
+  const row = document.createElement("div");
+  row.className = "chip-row";
+  BUILD_ITEMS.forEach(it => {
+    row.appendChild(makeChip(`${it.emoji} ${it.noun}`, "act", buildItem === it, () => {
+      buildItem = it; renderBuilder(); updateBuildResult();
+    }));
+  });
+  targetWrap.append(title, row);
+
+  if (both) adjWrap.append(subHead("👕 옷 색깔"));
+  const t = document.createElement("div");
+  t.className = "chip-group-title";
+  t.textContent = "🎨 색깔 (골라도 되고 안 골라도 돼요)";
+  const r = document.createElement("div");
+  r.className = "chip-row";
+  ITEM_COLORS.forEach(c => {
+    const on = buildItemColor && buildItemColor.en === c.en;
+    r.appendChild(makeChip(`${c.en} (${c.ko})`, "where", on, () => {
+      buildItemColor = on ? null : c;
+      renderBuilder(); updateBuildResult();
+    }));
+  });
+  adjWrap.append(t, r);
 }
 
 /* has 조합 검사: 어울리지 않는 꾸밈말이면 이유를 알려줘요 */
@@ -623,7 +643,9 @@ function buildPreviewFace() {
     eyeColor: "brown",
   };
   if (!buildSubject.boy) f.hairLen = "long";
-  if (buildMode === "has" && buildPart) {
+  const doHas = (buildMode === "has" || buildMode === "both") && buildPart;
+  const doWear = (buildMode === "wearing" || buildMode === "both") && buildItem;
+  if (doHas) {
     if (buildPart.key === "eyes") {
       if (buildAdjs.size) f.eyeSize = buildAdjs.size;
       if (buildAdjs.color) f.eyeColor = buildAdjs.color;
@@ -637,7 +659,7 @@ function buildPreviewFace() {
       if (buildAdjs.size) f.earSize = buildAdjs.size;
     }
   }
-  if (buildMode === "wearing" && buildItem) {
+  if (doWear) {
     Object.assign(f, buildItem.apply);
     const col = buildItemColor ? buildItemColor.en : null;
     if (buildItem.apply.dress) f.dress = col || "pink";
@@ -648,78 +670,87 @@ function buildPreviewFace() {
   return f;
 }
 
-function updateBuildResult() {
-  const box = document.getElementById("build-result");
+/* has 문장 만들기 → { en, ko } | { incomplete } | { error } */
+function hasSentence() {
+  if (!buildPart) return { incomplete: "part" };
+  if (!Object.keys(buildAdjs).length) return { incomplete: "adj" };
+  const why = checkHasCombo(buildPart, buildAdjs);
+  if (why) return { error: why };
+  const adjEn = [buildAdjs.size || buildAdjs.length, buildAdjs.style, buildAdjs.color].filter(Boolean);
+  const adjKoArr = [];
+  if (buildAdjs.size) adjKoArr.push(adjKo("size", buildAdjs.size));
+  if (buildAdjs.length) adjKoArr.push(adjKo("length", buildAdjs.length));
+  if (buildAdjs.style) adjKoArr.push(adjKo("style", buildAdjs.style));
+  if (buildAdjs.color) adjKoArr.push(adjKo("color", buildAdjs.color));
+  const np = (buildPart.article ? buildPart.article + " " : "") + adjEn.join(" ") + " " + buildPart.en;
+  return {
+    en: `${buildSubject.en} has ${np}.`,
+    ko: `${buildSubject.ko} ${adjKoArr.join(" ")} ${buildPart.koObj} 가지고 있어요.`,
+  };
+}
 
-  /* --- has ~ --- */
-  if (buildMode === "has") {
-    if (!buildPart) {
-      box.className = "build-result empty";
-      box.textContent = "누구를 · 어디를 묘사할지 골라보세요! 👆";
-      lastBuilt = "";
-      return;
-    }
-    const chosen = Object.keys(buildAdjs);
-    if (!chosen.length) {
-      box.className = "build-result empty";
-      box.textContent = `"${buildSubject.en} has ... ${buildPart.en}." — 꾸며 주는 말(크기·색깔 등)을 골라 문장을 완성해요! 👆`;
-      lastBuilt = "";
-      return;
-    }
-    const why = checkHasCombo(buildPart, buildAdjs);
-    if (why) {
-      box.className = "build-result bad";
-      box.innerHTML = "";
-      const badge = document.createElement("div");
-      badge.className = "br-badge";
-      badge.textContent = "🤔 이 조합은 어색해요";
-      const note = document.createElement("div");
-      note.className = "br-note";
-      note.innerHTML = why;
-      box.append(badge, note);
-      lastBuilt = "";
-      return;
-    }
-    // 형용사 순서: 크기/길이 → 모양 → 색깔
-    const adjEn = [buildAdjs.size || buildAdjs.length, buildAdjs.style, buildAdjs.color].filter(Boolean);
-    const adjKoArr = [];
-    if (buildAdjs.size) adjKoArr.push(adjKo("size", buildAdjs.size));
-    if (buildAdjs.length) adjKoArr.push(adjKo("length", buildAdjs.length));
-    if (buildAdjs.style) adjKoArr.push(adjKo("style", buildAdjs.style));
-    if (buildAdjs.color) adjKoArr.push(adjKo("color", buildAdjs.color));
-    const np = (buildPart.article ? buildPart.article + " " : "") + adjEn.join(" ") + " " + buildPart.en;
-    const en = `${buildSubject.en} has ${np}.`;
-    const ko = `${buildSubject.ko} ${adjKoArr.join(" ")} ${buildPart.koObj} 가지고 있어요.`;
-    showGoodResult(box, en, ko);
-    return;
-  }
-
-  /* --- is wearing ~ --- */
-  if (!buildItem) {
-    box.className = "build-result empty";
-    box.textContent = "무엇을 입고/쓰고 있는지 골라보세요! 👆";
-    lastBuilt = "";
-    return;
-  }
+/* wearing 문장 만들기 → { en, ko } | { incomplete } | { error } */
+function wearSentence() {
+  if (!buildItem) return { incomplete: "item" };
   if (buildItemColor && !buildItem.color) {
-    box.className = "build-result bad";
-    box.innerHTML = "";
-    const badge = document.createElement("div");
-    badge.className = "br-badge";
-    badge.textContent = "🤔 이 조합은 어색해요";
-    const note = document.createElement("div");
-    note.className = "br-note";
-    note.innerHTML = `"<b>${buildItem.noun}</b>" 에는 보통 색깔을 붙이지 않아요.<br>색깔 없이 말하거나, <b>dress · hat · cap</b> 같은 것을 골라 보세요!`;
-    box.append(badge, note);
-    lastBuilt = "";
-    return;
+    return { error: `"<b>${buildItem.noun}</b>" 에는 보통 색깔을 붙이지 않아요.<br>색깔 없이 말하거나, <b>dress · hat · cap</b> 같은 것을 골라 보세요!` };
   }
   const colorEn = buildItemColor ? buildItemColor.en + " " : "";
   const np = (buildItem.plural ? "" : "a ") + colorEn + buildItem.noun;
-  const en = `${buildSubject.en}'s wearing ${np}.`;
   const koColor = buildItemColor ? buildItemColor.ko + " " : "";
-  const ko = `${buildSubject.ko} ${koColor}${buildItem.koObj} ${buildItem.verb}고 있어요.`;
-  showGoodResult(box, en, ko);
+  return {
+    en: `${buildSubject.en}'s wearing ${np}.`,
+    ko: `${buildSubject.ko} ${koColor}${buildItem.koObj} ${buildItem.verb}고 있어요.`,
+  };
+}
+
+function buildEmpty(box, msg) {
+  box.className = "build-result empty";
+  box.textContent = msg;
+  lastBuilt = "";
+}
+function buildBad(box, whyHtml) {
+  box.className = "build-result bad";
+  box.innerHTML = "";
+  const badge = document.createElement("div");
+  badge.className = "br-badge";
+  badge.textContent = "🤔 이 조합은 어색해요";
+  const note = document.createElement("div");
+  note.className = "br-note";
+  note.innerHTML = whyHtml;
+  box.append(badge, note);
+  lastBuilt = "";
+}
+
+function updateBuildResult() {
+  const box = document.getElementById("build-result");
+
+  /* --- 🙌 has ~ --- */
+  if (buildMode === "has") {
+    const r = hasSentence();
+    if (r.incomplete === "part") return buildEmpty(box, "누구를 · 어디를 묘사할지 골라보세요! 👆");
+    if (r.incomplete === "adj") return buildEmpty(box, `"${buildSubject.en} has ... ${buildPart.en}." — 꾸며 주는 말(크기·색깔 등)을 골라 문장을 완성해요! 👆`);
+    if (r.error) return buildBad(box, r.error);
+    return showGoodResult(box, r.en, r.ko);
+  }
+
+  /* --- 👕 is wearing ~ --- */
+  if (buildMode === "wearing") {
+    const r = wearSentence();
+    if (r.incomplete) return buildEmpty(box, "무엇을 입고/쓰고 있는지 골라보세요! 👆");
+    if (r.error) return buildBad(box, r.error);
+    return showGoodResult(box, r.en, r.ko);
+  }
+
+  /* --- 🙌+👕 둘 다 (두 문장) --- */
+  const h = hasSentence();
+  const w = wearSentence();
+  if (h.error) return buildBad(box, h.error);
+  if (w.error) return buildBad(box, w.error);
+  if (h.incomplete || w.incomplete) {
+    return buildEmpty(box, "🙌 신체 문장과 👕 입은 것 문장을 모두 완성하면 두 문장이 이어져요! 👆 (예: She has long hair. She's wearing a red dress.)");
+  }
+  showGoodResult(box, h.en + " " + w.en, h.ko + " " + w.ko);
 }
 
 function showGoodResult(box, en, ko) {
@@ -773,26 +804,36 @@ function showGoodResult(box, en, ko) {
 
 function randOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+function fillRandomHas() {
+  buildPart = randOf(BUILD_PARTS);
+  buildAdjs = {};
+  if (buildPart.allow.size && Math.random() < (buildPart.allow.color ? 0.6 : 1)) {
+    buildAdjs.size = randOf(BUILD_ADJ_GROUPS[0].items).en;
+  }
+  if (buildPart.allow.length) buildAdjs.length = randOf(BUILD_ADJ_GROUPS[1].items).en;
+  if (buildPart.allow.style && Math.random() < 0.6) buildAdjs.style = randOf(BUILD_ADJ_GROUPS[2].items).en;
+  if (buildPart.allow.color) {
+    const pool = buildPart.allow.color === "eye" ? EYE_COLOR_OK : HAIR_COLOR_OK;
+    buildAdjs.color = randOf(pool);
+  }
+  // 꾸밈말이 하나도 없으면 최소 하나는 넣어 문장이 되게
+  if (!Object.keys(buildAdjs).length) {
+    if (buildPart.allow.size) buildAdjs.size = randOf(BUILD_ADJ_GROUPS[0].items).en;
+    else if (buildPart.allow.length) buildAdjs.length = randOf(BUILD_ADJ_GROUPS[1].items).en;
+  }
+}
+function fillRandomWear() {
+  buildItem = randOf(BUILD_ITEMS);
+  buildItemColor = (buildItem.color && Math.random() < 0.8) ? randOf(ITEM_COLORS) : null;
+}
+
 document.getElementById("build-random").addEventListener("click", () => {
   buildSubject = randOf(BUILD_SUBJECTS);
-  buildMode = Math.random() < 0.55 ? "has" : "wearing";
+  buildMode = randOf(["has", "wearing", "both"]);
   buildAdjs = {}; buildItem = null; buildItemColor = null; buildPart = null;
 
-  if (buildMode === "has") {
-    buildPart = randOf(BUILD_PARTS);
-    if (buildPart.allow.size && Math.random() < (buildPart.allow.color ? 0.6 : 1)) {
-      buildAdjs.size = randOf(BUILD_ADJ_GROUPS[0].items).en;
-    }
-    if (buildPart.allow.length) buildAdjs.length = randOf(BUILD_ADJ_GROUPS[1].items).en;
-    if (buildPart.allow.style && Math.random() < 0.6) buildAdjs.style = randOf(BUILD_ADJ_GROUPS[2].items).en;
-    if (buildPart.allow.color) {
-      const pool = buildPart.allow.color === "eye" ? EYE_COLOR_OK : HAIR_COLOR_OK;
-      buildAdjs.color = randOf(pool);
-    }
-  } else {
-    buildItem = randOf(BUILD_ITEMS);
-    if (buildItem.color && Math.random() < 0.8) buildItemColor = randOf(ITEM_COLORS);
-  }
+  if (buildMode === "has" || buildMode === "both") fillRandomHas();
+  if (buildMode === "wearing" || buildMode === "both") fillRandomWear();
   renderBuilder();
   updateBuildResult();
 });
