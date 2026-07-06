@@ -237,8 +237,6 @@ const BODY_WORDS = [
 const WEAR_WORDS = [
   { en: "dress",      ko: "드레스",        emoji: "👗", ex: "She's wearing a yellow dress.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", dress: "pink" } },
-  { en: "shirt",      ko: "셔츠",          emoji: "👕", ex: "He's wearing a white shirt.",
-    face: { boy: true,  hairLen: "short", hairColor: "black", eyeColor: "brown", shirt: "white" } },
   { en: "hat",        ko: "모자",          emoji: "👒", ex: "She's wearing a hat.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", hat: "sun", hatColor: "yellow" } },
   { en: "cap",        ko: "야구 모자",     emoji: "🧢", ex: "He's wearing a blue cap.",
@@ -316,12 +314,11 @@ const HAIR_COLOR_OK = ["black", "brown", "blonde", "yellow", "red", "purple", "p
  * apply: 캐릭터 그림에 반영할 내용 */
 const BUILD_ITEMS = [
   { key: "dress",   noun: "dress",      koObj: "드레스를",        verb: "입", emoji: "👗", color: true,  apply: { dress: true } },
-  { key: "shirt",   noun: "shirt",      koObj: "셔츠를",          verb: "입", emoji: "👕", color: true,  apply: { shirt: true } },
   { key: "hat",     noun: "hat",        koObj: "모자를",          verb: "쓰", emoji: "👒", color: true,  apply: { hat: "sun" } },
   { key: "cap",     noun: "cap",        koObj: "야구 모자를",     verb: "쓰", emoji: "🧢", color: true,  apply: { hat: "cap" } },
   { key: "cowboy",  noun: "cowboy hat", koObj: "카우보이 모자를", verb: "쓰", emoji: "🤠", color: false, apply: { hat: "cowboy" } },
   { key: "helmet",  noun: "helmet",     koObj: "헬멧을",          verb: "쓰", emoji: "⛑️", color: true,  apply: { hat: "helmet" } },
-  { key: "glasses", noun: "glasses",    koObj: "안경을",          verb: "쓰", emoji: "👓", color: true,  plural: true, apply: { glasses: true } },
+  { key: "glasses", noun: "glasses",    koObj: "안경을",          verb: "쓰", emoji: "👓", color: false, plural: true, apply: { glasses: true } },
   { key: "sunglasses", noun: "sunglasses", koObj: "선글라스를",   verb: "끼", emoji: "🕶️", color: false, plural: true, apply: { sunglasses: true } },
   { key: "mask",    noun: "mask",       koObj: "마스크를",        verb: "쓰", emoji: "😷", color: true,  apply: { mask: true } },
   { key: "boots",   noun: "boots",      koObj: "부츠를",          verb: "신", emoji: "👢", color: true,  plural: true, apply: { boots: true } },
@@ -360,56 +357,6 @@ const QUIZ_WEARS = [
   { key: "helmet",     en: "a red helmet",       ko: "빨간 헬멧을 쓰고",   apply: { hat: "helmet", hatColor: "red" } },
   { key: "reddress",   en: "a red dress",        ko: "빨간 드레스를 입고", girlOnly: true, apply: { dress: "red" } },
   { key: "yellowdress", en: "a yellow dress",    ko: "노란 드레스를 입고", girlOnly: true, apply: { dress: "yellow" } },
-];
-
-/* ===========================================================
- * 🗂️ 학습지(정보 차 활동) 인물 6명
- *  - 활동지 그대로: 그림 + 생김새 힌트 + 문장 수 + 목표 문장
- *  - build: '문장 만들기'에 그대로 불러와 완성하도록 하는 값
- * =========================================================== */
-const ACTIVITY_CHARS = [
-  {
-    hintKo: "파란색 눈", n: 1,
-    face: { boy: true, hairLen: "short", hairStyle: "straight", hairColor: "brown", eyeColor: "blue" },
-    build: { boy: true, part: "eyes", adjs: { color: "blue" } },
-    en: "He has blue eyes.",
-    ko: "그는 파란 눈을 가지고 있어요.",
-  },
-  {
-    hintKo: "짧은 회색 머리", n: 1,
-    face: { boy: false, hairLen: "short", hairStyle: "straight", hairColor: "gray", eyeColor: "brown" },
-    build: { boy: false, part: "hair", adjs: { length: "short", color: "gray" } },
-    en: "She has short gray hair.",
-    ko: "그녀는 짧은 회색 머리를 가지고 있어요.",
-  },
-  {
-    hintKo: "갈색 눈 · 검은 안경", n: 2,
-    face: { boy: true, hairLen: "short", hairStyle: "straight", hairColor: "brown", eyeColor: "brown", glasses: true, glassesColor: "black" },
-    build: { boy: true, part: "eyes", adjs: { color: "brown" }, item: "glasses", itemColor: "black" },
-    en: "He has brown eyes. He's wearing black glasses.",
-    ko: "그는 갈색 눈을 가지고 있어요. 그는 까만 안경을 쓰고 있어요.",
-  },
-  {
-    hintKo: "긴 갈색 머리 · 빨간색 드레스", n: 2,
-    face: { boy: false, hairLen: "long", hairStyle: "straight", hairColor: "brown", eyeColor: "brown", dress: "red" },
-    build: { boy: false, part: "hair", adjs: { length: "long", color: "brown" }, item: "dress", itemColor: "red" },
-    en: "She has long brown hair. She's wearing a red dress.",
-    ko: "그녀는 긴 갈색 머리를 가지고 있어요. 그녀는 빨간색 드레스를 입고 있어요.",
-  },
-  {
-    hintKo: "짧은 검은색 머리 · 하얀색 셔츠", n: 2,
-    face: { boy: true, hairLen: "short", hairStyle: "straight", hairColor: "black", eyeColor: "brown", shirt: "white" },
-    build: { boy: true, part: "hair", adjs: { length: "short", color: "black" }, item: "shirt", itemColor: "white" },
-    en: "He has short black hair. He's wearing a white shirt.",
-    ko: "그는 짧은 검은 머리를 가지고 있어요. 그는 하얀색 셔츠를 입고 있어요.",
-  },
-  {
-    hintKo: "검은색 눈 · 노란색 드레스", n: 2,
-    face: { boy: false, hairLen: "long", hairStyle: "straight", hairColor: "black", eyeColor: "black", dress: "yellow" },
-    build: { boy: false, part: "eyes", adjs: { color: "black" }, item: "dress", itemColor: "yellow" },
-    en: "She has black eyes. She's wearing a yellow dress.",
-    ko: "그녀는 검은 눈을 가지고 있어요. 그녀는 노란색 드레스를 입고 있어요.",
-  },
 ];
 
 /* ===== 단어 뜻 사전 ===== */
@@ -466,7 +413,6 @@ const WORD_MEANINGS = {
   "gold": "금색",
   "metal": "금속",
   "dress": "드레스, 원피스",
-  "shirt": "셔츠",
   "hat": "모자",
   "cap": "(챙 달린) 야구 모자",
   "cowboy": "카우보이",
