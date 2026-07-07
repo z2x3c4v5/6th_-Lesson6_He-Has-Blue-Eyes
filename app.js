@@ -156,8 +156,8 @@ function faceSVG(f, bg) {
     p.push(`<path d="M76,150 L124,150 L146,219 L54,219 Z" fill="${dC}" stroke="rgba(0,0,0,0.1)" stroke-width="1.5"/>`);
     p.push(`<path d="M88,150 Q100,160 112,150 L112,158 Q100,168 88,158 Z" fill="rgba(255,255,255,0.55)"/>`);
   } else {
-    const sC = f.shirt ? cHex(f.shirt) : (f.boy === false ? "#f9a8d4" : "#7dd3fc");
-    p.push(`<path d="M66,156 Q100,142 134,156 L140,219 L60,219 Z" fill="${sC}" stroke="rgba(0,0,0,0.08)" stroke-width="1.5"/>`);
+    const sC = (f.shirt && f.shirt !== true) ? cHex(f.shirt) : (f.boy === false ? "#f9a8d4" : "#7dd3fc");
+    p.push(`<path d="M66,156 Q100,142 134,156 L140,219 L60,219 Z" fill="${sC}" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>`);
   }
 
   // 목
@@ -221,11 +221,12 @@ function faceSVG(f, bg) {
   // 안경 / 선글라스
   if (f.glasses || f.sunglasses) {
     const lens = f.sunglasses ? `fill="#1f2937" opacity="0.92"` : `fill="none"`;
-    p.push(`<circle cx="81" cy="94" r="13" ${lens} stroke="#374151" stroke-width="3"/>`);
-    p.push(`<circle cx="119" cy="94" r="13" ${lens} stroke="#374151" stroke-width="3"/>`);
-    p.push(`<line x1="94" y1="94" x2="106" y2="94" stroke="#374151" stroke-width="3"/>`);
-    p.push(`<line x1="68" y1="92" x2="54" y2="90" stroke="#374151" stroke-width="3"/>`);
-    p.push(`<line x1="132" y1="92" x2="146" y2="90" stroke="#374151" stroke-width="3"/>`);
+    const frame = f.sunglasses ? "#374151" : cHex(f.glassesColor, "#374151");
+    p.push(`<circle cx="81" cy="94" r="13" ${lens} stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<circle cx="119" cy="94" r="13" ${lens} stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<line x1="94" y1="94" x2="106" y2="94" stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<line x1="68" y1="92" x2="54" y2="90" stroke="${frame}" stroke-width="3"/>`);
+    p.push(`<line x1="132" y1="92" x2="146" y2="90" stroke="${frame}" stroke-width="3"/>`);
   }
 
   // 모자류 (머리 위에 그려서 앞머리를 덮음)
@@ -716,9 +717,11 @@ function buildPreviewFace() {
     Object.assign(f, mlItem.apply);
     const col = mlItemColor ? mlItemColor.en : null;
     if (mlItem.apply.dress) f.dress = col || "pink";
+    if (mlItem.apply.shirt) f.shirt = col || (f.boy ? "blue" : "pink");
     if (mlItem.apply.hat) f.hatColor = col || undefined;
     if (mlItem.apply.mask && col) f.maskColor = col;
     if (mlItem.apply.boots && col) f.bootColor = col;
+    if (mlItem.key === "glasses" && col) f.glassesColor = col;
   }
   return f;
 }

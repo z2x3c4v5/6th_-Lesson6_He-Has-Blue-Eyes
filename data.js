@@ -237,6 +237,8 @@ const BODY_WORDS = [
 const WEAR_WORDS = [
   { en: "dress",      ko: "드레스",        emoji: "👗", ex: "She's wearing a yellow dress.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", dress: "pink" } },
+  { en: "shirt",      ko: "셔츠",          emoji: "👕", ex: "He's wearing a white shirt.",
+    face: { boy: true,  hairLen: "short", hairColor: "black", eyeColor: "brown", shirt: "white" } },
   { en: "hat",        ko: "모자",          emoji: "👒", ex: "She's wearing a hat.",
     face: { boy: false, hairLen: "long", hairColor: "brown", eyeColor: "brown", hat: "sun", hatColor: "yellow" } },
   { en: "cap",        ko: "야구 모자",     emoji: "🧢", ex: "He's wearing a blue cap.",
@@ -314,11 +316,12 @@ const HAIR_COLOR_OK = ["black", "brown", "blonde", "yellow", "red", "purple", "p
  * apply: 캐릭터 그림에 반영할 내용 */
 const BUILD_ITEMS = [
   { key: "dress",   noun: "dress",      koObj: "드레스를",        verb: "입", emoji: "👗", color: true,  apply: { dress: true } },
+  { key: "shirt",   noun: "shirt",      koObj: "셔츠를",          verb: "입", emoji: "👕", color: true,  apply: { shirt: true } },
   { key: "hat",     noun: "hat",        koObj: "모자를",          verb: "쓰", emoji: "👒", color: true,  apply: { hat: "sun" } },
   { key: "cap",     noun: "cap",        koObj: "야구 모자를",     verb: "쓰", emoji: "🧢", color: true,  apply: { hat: "cap" } },
   { key: "cowboy",  noun: "cowboy hat", koObj: "카우보이 모자를", verb: "쓰", emoji: "🤠", color: false, apply: { hat: "cowboy" } },
   { key: "helmet",  noun: "helmet",     koObj: "헬멧을",          verb: "쓰", emoji: "⛑️", color: true,  apply: { hat: "helmet" } },
-  { key: "glasses", noun: "glasses",    koObj: "안경을",          verb: "쓰", emoji: "👓", color: false, plural: true, apply: { glasses: true } },
+  { key: "glasses", noun: "glasses",    koObj: "안경을",          verb: "쓰", emoji: "👓", color: true,  plural: true, apply: { glasses: true } },
   { key: "sunglasses", noun: "sunglasses", koObj: "선글라스를",   verb: "끼", emoji: "🕶️", color: false, plural: true, apply: { sunglasses: true } },
   { key: "mask",    noun: "mask",       koObj: "마스크를",        verb: "쓰", emoji: "😷", color: true,  apply: { mask: true } },
   { key: "boots",   noun: "boots",      koObj: "부츠를",          verb: "신", emoji: "👢", color: true,  plural: true, apply: { boots: true } },
@@ -413,6 +416,7 @@ const WORD_MEANINGS = {
   "gold": "금색",
   "metal": "금속",
   "dress": "드레스, 원피스",
+  "shirt": "셔츠",
   "hat": "모자",
   "cap": "(챙 달린) 야구 모자",
   "cowboy": "카우보이",
